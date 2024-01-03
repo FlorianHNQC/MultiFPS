@@ -62,7 +62,7 @@ namespace Unity.FPS.Game
                 value = 0.001f;
             float valueInDb = Mathf.Log10(value) * 20;
 
-            s_AudioManager.SetFloat("MasterVolume", valueInDb);
+            //s_AudioManager.SetFloat("MasterVolume", valueInDb);
         }
 
         public static float GetMasterVolume()
