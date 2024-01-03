@@ -21,6 +21,7 @@ public class NetWorkManagerUI : MonoBehaviour
         m_JoinButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartClient();
+            m_Canvas.gameObject.SetActive(false);
         });
     }
 }
