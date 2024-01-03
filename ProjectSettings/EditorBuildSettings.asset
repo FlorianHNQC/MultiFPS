@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Multijoueur/Test.unity
     guid: ba878725b61b6e24a82e3bc369fdfbab
+  - enabled: 1
+    path: Assets/Multijoueur/TestMenu.unity
+    guid: 38b2ef19757b3bb49b19dedcf14db4bf
   m_configObjects: {}

@@ -1430,6 +1430,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HostButton: {fileID: 354895628}
   m_JoinButton: {fileID: 262741213}
+  m_Canvas: {fileID: 1986803470}
 --- !u!1 &1801475609
 GameObject:
   m_ObjectHideFlags: 0
