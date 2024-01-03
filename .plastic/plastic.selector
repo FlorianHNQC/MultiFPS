@@ -1,0 +1,4 @@
+repository "FPS Microgame@Lerou_theroy@cloud"
+  path "/"
+    br "/main"
+    co "/main"
