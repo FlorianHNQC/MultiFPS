@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 832427111}
   - component: {fileID: 832427114}
   - component: {fileID: 832427115}
+  - component: {fileID: 832427116}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -417,11 +418,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 832427110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b4c4e7c5d6cd34bb04cb46517b4e23, type: 3}
+  m_Script: {fileID: 11500000, guid: bf10145f6bd13744c8fd10972a92ac61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Affiliation: 0
-  AimPoint: {fileID: 1568239701}
+--- !u!114 &832427116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832427110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d54177cab788734b8ecb4674c6e5328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioMixers:
+  - {fileID: 24100000, guid: fcc71635aab95ff4fbdf1880bf2afa2f, type: 2}
 --- !u!1 &1568239698
 GameObject:
   m_ObjectHideFlags: 0
