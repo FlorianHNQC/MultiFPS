@@ -45,7 +45,7 @@ namespace Unity.FPS.UI
 
         public int WeaponCounterIndex { get; set; }
 
-        PlayerWeaponsManager m_PlayerWeaponsManager;
+        PlayerWeaponsManagerN m_PlayerWeaponsManager;
         WeaponController m_Weapon;
 
         void Awake()
@@ -72,8 +72,8 @@ namespace Unity.FPS.UI
                 BulletCounter.text = weapon.GetCarriedPhysicalBullets().ToString();
 
             Reload.gameObject.SetActive(false);
-            m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
-            DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, AmmoCounter>(m_PlayerWeaponsManager, this);
+            m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManagerN>();
+            DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManagerN, AmmoCounter>(m_PlayerWeaponsManager, this);
 
             WeaponIndexText.text = (WeaponCounterIndex + 1).ToString();
 

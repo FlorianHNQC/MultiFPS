@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace Unity.FPS.Gameplay
 {
-    [RequireComponent(typeof(CharacterController), typeof(PlayerInputN), typeof(AudioSource))]
+    [RequireComponent(typeof(CharacterController), typeof(PlayerInputHandler), typeof(AudioSource))]
     public class PlayerCharacterControllerN : MonoBehaviour
     {
         [Header("References")] [Tooltip("Reference to the main camera used for the player")]
@@ -118,7 +118,7 @@ namespace Unity.FPS.Gameplay
         }
 
         Health m_Health;
-        PlayerInputN m_InputHandler;
+        PlayerInputHandler m_InputHandler;
         CharacterController m_Controller;
         PlayerWeaponsManagerN m_WeaponsManager;
         Actor m_Actor;
@@ -147,8 +147,8 @@ namespace Unity.FPS.Gameplay
             DebugUtility.HandleErrorIfNullGetComponent<CharacterController, PlayerCharacterControllerN>(m_Controller,
                 this, gameObject);
 
-            m_InputHandler = GetComponent<PlayerInputN>();
-            DebugUtility.HandleErrorIfNullGetComponent<PlayerInputN, PlayerCharacterControllerN>(m_InputHandler,
+            m_InputHandler = GetComponent<PlayerInputHandler>();
+            DebugUtility.HandleErrorIfNullGetComponent<PlayerInputHandler, PlayerCharacterControllerN>(m_InputHandler,
                 this, gameObject);
 
             m_WeaponsManager = GetComponent<PlayerWeaponsManagerN>();

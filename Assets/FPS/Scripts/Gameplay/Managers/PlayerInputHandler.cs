@@ -21,13 +21,13 @@ namespace Unity.FPS.Gameplay
         public bool InvertXAxis = false;
 
         GameFlowManager m_GameFlowManager;
-        PlayerCharacterController m_PlayerCharacterController;
+        PlayerCharacterControllerN m_PlayerCharacterController;
         bool m_FireInputWasHeld;
 
         void Start()
         {
-            m_PlayerCharacterController = GetComponent<PlayerCharacterController>();
-            DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerInputHandler>(
+            m_PlayerCharacterController = GetComponent<PlayerCharacterControllerN>();
+            DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterControllerN, PlayerInputHandler>(
                 m_PlayerCharacterController, this, gameObject);
             m_GameFlowManager = FindObjectOfType<GameFlowManager>();
             DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);

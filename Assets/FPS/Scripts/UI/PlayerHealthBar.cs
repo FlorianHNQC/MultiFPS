@@ -14,9 +14,9 @@ namespace Unity.FPS.UI
 
         void Start()
         {
-            PlayerCharacterController playerCharacterController =
-                GameObject.FindObjectOfType<PlayerCharacterController>();
-            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, PlayerHealthBar>(
+            PlayerCharacterControllerN playerCharacterController =
+                GameObject.FindObjectOfType<PlayerCharacterControllerN>();
+            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterControllerN, PlayerHealthBar>(
                 playerCharacterController, this);
 
             m_PlayerHealth = playerCharacterController.GetComponent<Health>();

@@ -13,12 +13,12 @@ namespace Unity.FPS.UI
         [Tooltip("Prefab for displaying weapon ammo")]
         public GameObject AmmoCounterPrefab;
 
-        PlayerWeaponsManager m_PlayerWeaponsManager;
+        PlayerWeaponsManagerN m_PlayerWeaponsManager;
         List<AmmoCounter> m_AmmoCounters = new List<AmmoCounter>();
 
         void Start()
         {
-            m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
+            m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManagerN>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, WeaponHUDManager>(m_PlayerWeaponsManager,
                 this);
 

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace Unity.FPS.Gameplay
 {
-    [RequireComponent(typeof(PlayerInputN))]
+    [RequireComponent(typeof(PlayerInputHandler))]
     public class PlayerWeaponsManagerN : MonoBehaviour
     {
         public enum WeaponSwitchState
@@ -83,7 +83,7 @@ namespace Unity.FPS.Gameplay
         public UnityAction<WeaponController, int> OnRemovedWeapon;
 
         WeaponController[] m_WeaponSlots = new WeaponController[9]; // 9 available weapon slots
-        PlayerInputN m_InputHandler;
+        PlayerInputHandler m_InputHandler;
         PlayerCharacterControllerN m_PlayerCharacterControllerN;
         float m_WeaponBobFactor;
         Vector3 m_LastCharacterPosition;
@@ -100,8 +100,8 @@ namespace Unity.FPS.Gameplay
             ActiveWeaponIndex = -1;
             m_WeaponSwitchState = WeaponSwitchState.Down;
 
-            m_InputHandler = GetComponent<PlayerInputN>();
-            DebugUtility.HandleErrorIfNullGetComponent<PlayerInputN, PlayerWeaponsManagerN>(m_InputHandler, this,
+            m_InputHandler = GetComponent<PlayerInputHandler>();
+            DebugUtility.HandleErrorIfNullGetComponent<PlayerInputHandler, PlayerWeaponsManagerN>(m_InputHandler, this,
                 gameObject);
 
             m_PlayerCharacterControllerN = GetComponent<PlayerCharacterControllerN>();

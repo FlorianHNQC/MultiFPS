@@ -467,9 +467,11 @@ GameObject:
   - component: {fileID: 1661717823}
   - component: {fileID: 5748692267122985006}
   - component: {fileID: 4543822153926065571}
-  - component: {fileID: 7279590730592379986}
-  - component: {fileID: 3470567889671990007}
-  - component: {fileID: 3224227644689962067}
+  - component: {fileID: 5236754582838835326}
+  - component: {fileID: 2824762016901674212}
+  - component: {fileID: 7234085047364635348}
+  - component: {fileID: 2129022627961781568}
+  - component: {fileID: 8085401522418160859}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -748,7 +750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1098712976
+  GlobalObjectIdHash: 585676379
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -770,7 +772,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Affiliation: 0
   AimPoint: {fileID: 3625601170703586302}
---- !u!114 &7279590730592379986
+--- !u!114 &5236754582838835326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -779,7 +781,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 7253983127304857660}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87210cb48ce8efb4fa5aad2b1ee25913, type: 3}
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &2824762016901674212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7253983127304857660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac5ddb3ce9b8884ca9588dc620ffcab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   LookSensitivity: 1
@@ -787,7 +819,7 @@ MonoBehaviour:
   TriggerAxisThreshold: 0.4
   InvertYAxis: 0
   InvertXAxis: 0
---- !u!114 &3470567889671990007
+--- !u!114 &7234085047364635348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -826,12 +858,12 @@ MonoBehaviour:
   JumpSfx: {fileID: 8300000, guid: 13b59a14d34add64d84a623867546ff1, type: 3}
   LandSfx: {fileID: 8300000, guid: d0f1afed8fa916244af6ca73579ded67, type: 3}
   FallDamageSfx: {fileID: 8300000, guid: ef980d09b569380459e609fe90ef1db2, type: 3}
-  RecievesFallDamage: 1
+  RecievesFallDamage: 0
   MinSpeedForFallDamage: 10
   MaxSpeedForFallDamage: 30
   FallDamageAtMinSpeed: 10
   FallDamageAtMaxSpeed: 50
---- !u!114 &3224227644689962067
+--- !u!114 &2129022627961781568
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -855,15 +887,37 @@ MonoBehaviour:
   DefaultBobAmount: 0.05
   AimingBobAmount: 0.02
   RecoilSharpness: 50
-  MaxRecoilDistance: 0.2
+  MaxRecoilDistance: 0.5
   RecoilRestitutionSharpness: 10
   AimingAnimationSpeed: 10
   DefaultFov: 60
   WeaponFovMultiplier: 1
-  WeaponSwitchDelay: 0.2
+  WeaponSwitchDelay: 1
   FpsWeaponLayer:
     serializedVersion: 2
     m_Bits: 1024
+--- !u!114 &8085401522418160859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7253983127304857660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f22a420493bcf4a8ca3e259797484f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioSource: {fileID: 1272397862697293493}
+  JetpackVfx: []
+  IsJetpackUnlockedAtStart: 0
+  JetpackAcceleration: 7
+  JetpackDownwardVelocityCancelingFactor: 1
+  ConsumeDuration: 1.5
+  RefillDurationGrounded: 2
+  RefillDurationInTheAir: 5
+  RefillDelay: 1
+  JetpackSfx: {fileID: 8300000, guid: 01a15bd1861d7914abbedc36aad1f4d6, type: 3}
 --- !u!1 &7383874627095517793
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,8 +48,8 @@ namespace Unity.FPS.UI
         void Start()
         {
             // Subscribe to player damage events
-            PlayerCharacterController playerCharacterController = FindObjectOfType<PlayerCharacterController>();
-            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, FeedbackFlashHUD>(
+            PlayerCharacterControllerN playerCharacterController = FindObjectOfType<PlayerCharacterControllerN>();
+            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterControllerN, FeedbackFlashHUD>(
                 playerCharacterController, this);
 
             m_PlayerHealth = playerCharacterController.GetComponent<Health>();
