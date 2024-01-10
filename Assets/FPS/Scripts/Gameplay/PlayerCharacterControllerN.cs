@@ -1,11 +1,13 @@
 using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Networking;
 
 namespace Unity.FPS.Gameplay
 {
     [RequireComponent(typeof(CharacterController), typeof(PlayerInputHandler), typeof(AudioSource))]
-    public class PlayerCharacterControllerN : MonoBehaviour
+    public class PlayerCharacterControllerN : NetworkBehaviour
     {
         [Header("References")] [Tooltip("Reference to the main camera used for the player")]
         public Camera PlayerCamera;
@@ -133,13 +135,14 @@ namespace Unity.FPS.Gameplay
         const float k_JumpGroundingPreventionTime = 0.2f;
         const float k_GroundCheckDistanceInAir = 0.07f;
 
+
         void Awake()
         {
+
             ActorsManager actorsManager = FindObjectOfType<ActorsManager>();
             if (actorsManager != null)
                 actorsManager.SetPlayer(gameObject);
         }
-
         void Start()
         {
             // fetch components on the same gameObject
