@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-//using Unity.NetCode;
 
 namespace Unity.FPS.AI
 {
     [RequireComponent(typeof(Health), typeof(Actor), typeof(NavMeshAgent))]
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : NetworkBehaviour
     {
 
         [System.Serializable]
