@@ -28,13 +28,19 @@ public class NetWorkManagerUI : MonoBehaviour
 
             if (m_NetworkManager.StartHost() == true)
             {
-                m_CanvasMenu.gameObject.SetActive(false);
-                StartCoroutine(Spawn());
+                if(m_NetworkManager.IsServer == true)
+                {
+                    m_CanvasMenu.gameObject.SetActive(false);
+                    StartCoroutine(Spawn());
+                }
+                else
+                {
+                    Debug.Log("is not the server");
+                }
             }
             else {
                 Debug.Log("start can't start");
-            }
-                ;
+            };
         });
         m_JoinButton.onClick.AddListener(() =>
         {
@@ -50,7 +56,7 @@ public class NetWorkManagerUI : MonoBehaviour
             m_CanvasHUD.gameObject.SetActive(true);
             enemy.transform.position = enemySpawnPosition.transform.position;
             GameObject Enemy = Instantiate(enemy);
-            enemy.GetComponent<NetworkObject>().Spawn();
+            Enemy.GetComponent<NetworkObject>().Spawn();
             yield return null;      
         }
 
