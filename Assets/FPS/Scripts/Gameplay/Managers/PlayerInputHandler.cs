@@ -1,9 +1,10 @@
 ﻿using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.FPS.Gameplay
 {
-    public class PlayerInputHandler : MonoBehaviour
+    public class PlayerInputHandler : NetworkBehaviour
     {
         [Tooltip("Sensitivity multiplier for moving the camera around")]
         public float LookSensitivity = 1f;
@@ -26,6 +27,7 @@ namespace Unity.FPS.Gameplay
 
         void Start()
         {
+            if (!IsLocalPlayer) return;
             m_PlayerCharacterController = GetComponent<PlayerCharacterControllerN>();
             DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterControllerN, PlayerInputHandler>(
                 m_PlayerCharacterController, this, gameObject);
@@ -48,6 +50,7 @@ namespace Unity.FPS.Gameplay
 
         public Vector3 GetMoveInput()
         {
+            if (!IsLocalPlayer) return Vector3.zero;
             if (CanProcessInput())
             {
                 Vector3 move = new Vector3(Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal), 0f,
