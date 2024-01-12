@@ -914,7 +914,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832427110}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e1fea5cb3ddbc249bd0181e6766db68, type: 3}
   m_Name: 
@@ -1031,6 +1031,7 @@ MonoBehaviour:
   m_JoinButton: {fileID: 262741213}
   m_NetworkManager: {fileID: 832427119}
   m_CanvasMenu: {fileID: 1986803470}
+  m_CameraMenu: {fileID: 1568239700}
   m_CanvasHUD: {fileID: 1856100640}
   m_EnnemyList: []
   enemy: {fileID: 2015434656898269652, guid: e29d43f43cc5d82499dd9926e01847d3, type: 3}
@@ -1272,7 +1273,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1268309829}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.816784, y: 184.13216, z: -162.37769}
+  m_LocalPosition: {x: 18.65, y: 184.13216, z: -156.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

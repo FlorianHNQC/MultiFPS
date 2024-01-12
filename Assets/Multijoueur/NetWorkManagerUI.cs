@@ -13,6 +13,7 @@ public class NetWorkManagerUI : MonoBehaviour
     [SerializeField] private Button m_JoinButton;
     [SerializeField] private NetworkManager m_NetworkManager;
     [SerializeField] private Canvas m_CanvasMenu;
+    [SerializeField] private Camera m_CameraMenu;
     [SerializeField] private GameObject m_CanvasHUD;
     [SerializeField] private List<GameObject> m_EnnemyList;
     [SerializeField] private GameObject enemy;
@@ -21,16 +22,12 @@ public class NetWorkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-
-
         m_HostButton.onClick.AddListener(() =>
         {
-
             if (m_NetworkManager.StartHost() == true)
             {
                 if(m_NetworkManager.IsServer == true)
                 {
-                    m_CanvasMenu.gameObject.SetActive(false);
                     StartCoroutine(Spawn());
                 }
                 else
@@ -45,14 +42,14 @@ public class NetWorkManagerUI : MonoBehaviour
         m_JoinButton.onClick.AddListener(() =>
         {
             m_NetworkManager.StartClient();
-            m_CanvasMenu.gameObject.SetActive(false);
-            StartCoroutine(Spawn());
-
+            StartCoroutine(SpawnClient());
+            //
         });
 
         IEnumerator Spawn()
         {
             yield return new WaitForSeconds(2f);
+            m_CanvasMenu.gameObject.SetActive(false);
             m_CanvasHUD.gameObject.SetActive(true);
             enemy.transform.position = enemySpawnPosition.transform.position;
             GameObject Enemy = Instantiate(enemy);
@@ -60,5 +57,12 @@ public class NetWorkManagerUI : MonoBehaviour
             yield return null;      
         }
 
+        IEnumerator SpawnClient()
+        {
+            yield return new WaitForSeconds(2f);
+            m_CanvasMenu.gameObject.SetActive(false);
+            m_CanvasHUD.gameObject.SetActive(true);
+            yield return null;
+        }
     }
 }

@@ -752,12 +752,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 585676379
   AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
+  SynchronizeTransform: 0
+  ActiveSceneSynchronization: 1
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
+  AutoObjectParentSync: 0
 --- !u!114 &4543822153926065571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -863,6 +863,16 @@ MonoBehaviour:
   MaxSpeedForFallDamage: 30
   FallDamageAtMinSpeed: 10
   FallDamageAtMaxSpeed: 50
+  ComponentToActivate:
+  - {fileID: 8303093099919959869}
+  - {fileID: 306504594}
+  ComponentToDesactivate:
+  - {fileID: 2824762016901674212}
+  m_Health: {fileID: 0}
+  m_InputHandler: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_WeaponsManager: {fileID: 0}
+  m_Actor: {fileID: 0}
 --- !u!114 &2129022627961781568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -993,7 +1003,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7442781921941657531}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1036,7 +1046,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7442781921941657531}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &2758827746426004724
 MonoBehaviour:
   m_ObjectHideFlags: 0

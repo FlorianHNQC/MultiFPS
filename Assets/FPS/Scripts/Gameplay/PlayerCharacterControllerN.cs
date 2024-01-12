@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Unity.FPS.Game;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using System.Collections;
 
 namespace Unity.FPS.Gameplay
 {
@@ -100,6 +102,8 @@ namespace Unity.FPS.Gameplay
 
         public UnityAction<bool> OnStanceChanged;
 
+        [SerializeField] List<Component> ComponentToActivate = new List<Component>();
+        [SerializeField] List<Component> ComponentToDesactivate = new List<Component>();
         public Vector3 CharacterVelocity { get; set; }
         public bool IsGrounded { get; private set; }
         public bool HasJumpedThisFrame { get; private set; }
@@ -119,11 +123,11 @@ namespace Unity.FPS.Gameplay
             }
         }
 
-        Health m_Health;
-        PlayerInputHandler m_InputHandler;
-        CharacterController m_Controller;
-        PlayerWeaponsManagerN m_WeaponsManager;
-        Actor m_Actor;
+        [SerializeField] Health m_Health;
+        [SerializeField] PlayerInputHandler m_InputHandler;
+        [SerializeField] CharacterController m_Controller;
+        [SerializeField] PlayerWeaponsManagerN m_WeaponsManager;
+        [SerializeField] Actor m_Actor;
         Vector3 m_GroundNormal;
         Vector3 m_CharacterVelocity;
         Vector3 m_LatestImpactSpeed;
@@ -135,13 +139,17 @@ namespace Unity.FPS.Gameplay
         const float k_JumpGroundingPreventionTime = 0.2f;
         const float k_GroundCheckDistanceInAir = 0.07f;
 
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
 
+        }
         void Awake()
         {
-
             ActorsManager actorsManager = FindObjectOfType<ActorsManager>();
             if (actorsManager != null)
                 actorsManager.SetPlayer(gameObject);
+          
         }
         void Start()
         {
@@ -175,6 +183,29 @@ namespace Unity.FPS.Gameplay
 
         void Update()
         {
+            if (IsLocalPlayer)
+            {
+                for (int i = 0; i < ComponentToActivate.Count; i++)
+                {
+                    Behaviour behaviourComponent = ComponentToActivate[i] as Behaviour;
+
+                    behaviourComponent.enabled = true;
+                   // Debug.Log("compnent activated " + behaviourComponent.name);
+                }
+
+            }
+            else
+            {
+                for (int i = 0; i < ComponentToDesactivate.Count; i++)
+                {
+                    Behaviour behaviourComponent = ComponentToDesactivate[i] as Behaviour;
+                    behaviourComponent.enabled = false;
+
+                }
+            }
+
+
+            // Debug.Log("local player ");
             // check for Y kill
             if (!IsDead && transform.position.y < KillHeight)
             {
@@ -192,7 +223,7 @@ namespace Unity.FPS.Gameplay
                 // Fall damage
                 float fallSpeed = -Mathf.Min(CharacterVelocity.y, m_LatestImpactSpeed.y);
                 float fallSpeedRatio = (fallSpeed - MinSpeedForFallDamage) /
-                                       (MaxSpeedForFallDamage - MinSpeedForFallDamage);
+                                        (MaxSpeedForFallDamage - MinSpeedForFallDamage);
                 if (RecievesFallDamage && fallSpeedRatio > 0f)
                 {
                     float dmgFromFall = Mathf.Lerp(FallDamageAtMinSpeed, FallDamageAtMaxSpeed, fallSpeedRatio);
@@ -216,7 +247,60 @@ namespace Unity.FPS.Gameplay
 
             UpdateCharacterHeight(false);
 
-            HandleCharacterMovement();
+            if (IsServer && IsLocalPlayer)
+            {
+                HandleCharacterMovement();
+            }
+            else if (IsLocalPlayer)
+            {
+            // HandleCharacterMovementServerRPC();
+                Debug.Log("2 " + m_CameraVerticalAngle);
+                MoveServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+                moveCameraServerRpc(m_CameraVerticalAngle);
+                PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+                Debug.Log("1 " + m_CameraVerticalAngle);
+            }
+            
+
+           
+        }
+
+        [ServerRpc]
+        private void MoveServerRPC(float GetLookInputsHorizontal, float GetLookInputsVertical, float a_CameraVerticalAngle,Vector3 GetMoveInput, float a_RotationSpeed, float a_RotationMultiplier) 
+        {
+            //Debug.Log("moveserverrpc");
+            // horizontal character rotation
+            {
+                // rotate the transform with the input speed around its local Y axis
+                transform.Rotate(
+                    new Vector3(0f, (GetLookInputsHorizontal * a_RotationSpeed * a_RotationMultiplier),
+                        0f), Space.Self);
+            }
+
+            {
+                // add vertical inputs to the camera's vertical angle
+                a_CameraVerticalAngle += GetLookInputsVertical * a_RotationSpeed * a_RotationMultiplier;
+
+                // limit the camera's vertical angle to min/max
+                a_CameraVerticalAngle = Mathf.Clamp(a_CameraVerticalAngle, -89f, 89f);
+
+                // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
+                MoveCameraClientRPC(a_CameraVerticalAngle);
+                //PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+            }
+           
+
+        }
+        [ClientRpc]
+        private void MoveCameraClientRPC(float a_CameraVerticalAngle)
+        {
+            m_CameraVerticalAngle = a_CameraVerticalAngle;
+            //PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+        }
+        [ServerRpc]
+        private void moveCameraServerRpc(float a_CameraVerticalAngle)
+        {
+            PlayerCamera.transform.localEulerAngles = new Vector3(a_CameraVerticalAngle, 0, 0);
         }
 
         void OnDie()
@@ -266,6 +350,7 @@ namespace Unity.FPS.Gameplay
                 }
             }
         }
+        
 
         void HandleCharacterMovement()
         {
@@ -275,6 +360,8 @@ namespace Unity.FPS.Gameplay
                 transform.Rotate(
                     new Vector3(0f, (m_InputHandler.GetLookInputsHorizontal() * RotationSpeed * RotationMultiplier),
                         0f), Space.Self);
+
+
             }
 
             // vertical camera rotation

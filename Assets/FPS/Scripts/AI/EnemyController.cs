@@ -120,6 +120,8 @@ namespace Unity.FPS.AI
         WeaponController[] m_Weapons;
         NavigationModule m_NavigationModule;
 
+        [SerializeField] List<Component> ComponentToActivate = new List<Component>();
+        [SerializeField] List<Component> ComponentToDesactivate = new List<Component>();
         void Start()
         {
             m_EnemyManager = FindObjectOfType<EnemyManager>();
@@ -204,6 +206,28 @@ namespace Unity.FPS.AI
 
         void Update()
         {
+            if (IsLocalPlayer)
+            {
+               // Debug.Log("local player ennemi");
+                for (int i = 0; i < ComponentToActivate.Count; i++)
+                {
+                    Behaviour behaviourComponent = ComponentToActivate[i] as Behaviour;
+
+                    behaviourComponent.enabled = true;
+                    Debug.Log("compnent activated ennemi" + behaviourComponent.name);
+                }
+
+            }
+            else
+            {
+                //Debug.Log("not local player ennemi ");
+                for (int i = 0; i < ComponentToDesactivate.Count; i++)
+                {
+                    Behaviour behaviourComponent = ComponentToDesactivate[i] as Behaviour;
+                    behaviourComponent.enabled = false;
+
+                }
+            }
             EnsureIsWithinLevelBounds();
 
             DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);

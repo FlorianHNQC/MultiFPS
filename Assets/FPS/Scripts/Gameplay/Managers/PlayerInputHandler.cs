@@ -21,18 +21,18 @@ namespace Unity.FPS.Gameplay
         [Tooltip("Used to flip the horizontal input axis")]
         public bool InvertXAxis = false;
 
-        GameFlowManager m_GameFlowManager;
+        //GameFlowManager m_GameFlowManager;
         PlayerCharacterControllerN m_PlayerCharacterController;
         bool m_FireInputWasHeld;
 
         void Start()
         {
-            if (!IsLocalPlayer) return;
+           // if (!IsLocalPlayer) return;
             m_PlayerCharacterController = GetComponent<PlayerCharacterControllerN>();
             DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterControllerN, PlayerInputHandler>(
                 m_PlayerCharacterController, this, gameObject);
-            m_GameFlowManager = FindObjectOfType<GameFlowManager>();
-            DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
+            //m_GameFlowManager = FindObjectOfType<GameFlowManager>();
+            //DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -45,12 +45,12 @@ namespace Unity.FPS.Gameplay
 
         public bool CanProcessInput()
         {
-            return Cursor.lockState == CursorLockMode.Locked && !m_GameFlowManager.GameIsEnding;
+            return Cursor.lockState == CursorLockMode.Locked;
         }
 
         public Vector3 GetMoveInput()
         {
-            if (!IsLocalPlayer) return Vector3.zero;
+            //if (!IsLocalPlayer) return Vector3.zero;
             if (CanProcessInput())
             {
                 Vector3 move = new Vector3(Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal), 0f,
@@ -67,12 +67,14 @@ namespace Unity.FPS.Gameplay
 
         public float GetLookInputsHorizontal()
         {
+           // Debug.Log("rotate k_MouseAxisNameHorizontal " + GetMouseOrStickLookAxis(GameConstants.k_MouseAxisNameHorizontal,GameConstants.k_AxisNameJoystickLookHorizontal));
             return GetMouseOrStickLookAxis(GameConstants.k_MouseAxisNameHorizontal,
                 GameConstants.k_AxisNameJoystickLookHorizontal);
         }
 
         public float GetLookInputsVertical()
         {
+          //  Debug.Log("rotate k_MouseAxisNameVertical " + GetMouseOrStickLookAxis(GameConstants.k_MouseAxisNameVertical,GameConstants.k_AxisNameJoystickLookVertical));
             return GetMouseOrStickLookAxis(GameConstants.k_MouseAxisNameVertical,
                 GameConstants.k_AxisNameJoystickLookVertical);
         }
