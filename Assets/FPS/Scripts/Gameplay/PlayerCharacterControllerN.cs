@@ -254,15 +254,21 @@ namespace Unity.FPS.Gameplay
             else if (IsLocalPlayer)
             {
             // HandleCharacterMovementServerRPC();
-                Debug.Log("2 " + m_CameraVerticalAngle);
+//                Debug.Log("2 " + m_CameraVerticalAngle);
                 MoveServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+                MovementsServerRPC(m_InputHandler.GetSprintInputHeld(), SprintSpeedModifier, m_InputHandler.GetMoveInput(), IsGrounded,
+                    MaxSpeedOnGround, IsCrouching, MaxSpeedCrouchedRatio, CharacterVelocity, m_InputHandler.GetJumpInputDown(), m_FootstepDistanceCounter,
+                    AccelerationSpeedInAir, MaxSpeedInAir, GravityDownForce);
                 moveCameraServerRpc(m_CameraVerticalAngle);
+                //                ApplyCharacterMovementsClientRpc(GetCapsuleBottomHemisphere(), GetCapsuleTopHemisphere(m_Controller.height));
+//                movePlayerServerRpc(cVelocity);
                 PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
-                Debug.Log("1 " + m_CameraVerticalAngle);
+                m_Controller.Move(CharacterVelocity * Time.deltaTime);
+                //               Debug.Log("1 " + m_CameraVerticalAngle);
             }
-            
 
-           
+
+
         }
 
         [ServerRpc]
@@ -288,9 +294,114 @@ namespace Unity.FPS.Gameplay
                 MoveCameraClientRPC(a_CameraVerticalAngle);
                 //PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
             }
-           
-
         }
+
+        [ServerRpc]
+        private void MovementsServerRPC(bool isSprinting, float a_SprintSpeedModifier, Vector3 MoveInput, bool isGrounded, float maxSpeedOnGround,
+            bool isCrouching, float maxSpeedCrouchedRatio, Vector3 characterVelocity, bool jumpInputDown, float a_FootstepDistanceCounter, float accelerationSpeedInAir,
+            float maxSpeedInAir, float gravityDownForce)
+        {
+            Vector3 a_CharacterVelocity = characterVelocity;
+            // Character moves
+            if (isSprinting)
+            {
+                isSprinting = SetCrouchingState(false, false);
+            }
+
+            float speedModifier = isSprinting ? a_SprintSpeedModifier : 1f;
+
+            // converts move input to a worldspace vector based on our character's transform orientation
+            Vector3 worldspaceMoveInput = transform.TransformVector(MoveInput);
+
+            // handle grounded movement
+            if (isGrounded)
+            {
+                // calculate the desired velocity from inputs, max speed, and current slope
+                Vector3 targetVelocity = worldspaceMoveInput * maxSpeedOnGround * speedModifier;
+                // reduce speed if crouching by crouch speed ratio
+                if (isCrouching)
+                    targetVelocity *= maxSpeedCrouchedRatio;
+                targetVelocity = GetDirectionReorientedOnSlope(targetVelocity.normalized, m_GroundNormal) *
+                                    targetVelocity.magnitude;
+
+                // smoothly interpolate between our current velocity and the target velocity based on acceleration speed
+                a_CharacterVelocity = Vector3.Lerp(a_CharacterVelocity, targetVelocity,
+                    MovementSharpnessOnGround * Time.deltaTime);
+
+                // jumping
+                if (isGrounded && jumpInputDown)
+                {
+                    // force the crouch state to false
+                    if (SetCrouchingState(false, false))
+                    {
+                        // start by canceling out the vertical component of our velocity
+                        a_CharacterVelocity = new Vector3(a_CharacterVelocity.x, 0f, a_CharacterVelocity.z);
+
+                        // then, add the jumpSpeed value upwards
+                        a_CharacterVelocity += Vector3.up * JumpForce;
+
+                        // play sound
+                        AudioSource.PlayOneShot(JumpSfx);
+
+                        // remember last time we jumped because we need to prevent snapping to ground for a short time
+/*                        m_LastTimeJumped = Time.time;
+                        HasJumpedThisFrame = true;
+
+                        // Force grounding to false
+                        IsGrounded = false;
+                        m_GroundNormal = Vector3.up;*/
+                    }
+                }
+
+                // footsteps sound
+                float chosenFootstepSfxFrequency =
+                    (isSprinting ? FootstepSfxFrequencyWhileSprinting : FootstepSfxFrequency);
+                if (a_FootstepDistanceCounter >= 1f / chosenFootstepSfxFrequency)
+                {
+                    a_FootstepDistanceCounter = 0f;
+                    AudioSource.PlayOneShot(FootstepSfx);
+                }
+
+                // keep track of distance traveled for footsteps sound
+                a_FootstepDistanceCounter += a_CharacterVelocity.magnitude * Time.deltaTime;
+            }
+            // handle air movement
+            else
+            {
+                // add air acceleration
+                a_CharacterVelocity += worldspaceMoveInput * accelerationSpeedInAir * Time.deltaTime;
+
+                // limit air speed to a maximum, but only horizontally
+                float verticalVelocity = a_CharacterVelocity.y;
+                Vector3 horizontalVelocity = Vector3.ProjectOnPlane(a_CharacterVelocity, Vector3.up);
+                horizontalVelocity = Vector3.ClampMagnitude(horizontalVelocity, maxSpeedInAir * speedModifier);
+                a_CharacterVelocity = horizontalVelocity + (Vector3.up * verticalVelocity);
+
+                // apply the gravity to the velocity
+                a_CharacterVelocity += Vector3.down * gravityDownForce * Time.deltaTime;
+            }
+
+            ApplyCharacterMovementsClientRpc(a_CharacterVelocity);
+            movePlayerServerRpc(a_CharacterVelocity);
+//            return a_CharacterVelocity;
+/*                // apply the final calculated velocity value as a character movement
+            Vector3 capsuleBottomBeforeMove = GetCapsuleBottomHemisphere();
+            Vector3 capsuleTopBeforeMove = GetCapsuleTopHemisphere(m_Controller.height);
+            m_Controller.Move(a_CharacterVelocity * Time.deltaTime);
+
+            // detect obstructions to adjust velocity accordingly
+            m_LatestImpactSpeed = Vector3.zero;
+            if (Physics.CapsuleCast(capsuleBottomBeforeMove, capsuleTopBeforeMove, m_Controller.radius,
+                a_CharacterVelocity.normalized, out RaycastHit hit, a_CharacterVelocity.magnitude * Time.deltaTime, -1,
+                QueryTriggerInteraction.Ignore))
+            {
+                // We remember the last impact speed because the fall damage logic might need it
+                m_LatestImpactSpeed = a_CharacterVelocity;
+
+                a_CharacterVelocity = Vector3.ProjectOnPlane(CharacterVelocity, hit.normal);
+            }*/
+        }
+
         [ClientRpc]
         private void MoveCameraClientRPC(float a_CameraVerticalAngle)
         {
@@ -301,6 +412,47 @@ namespace Unity.FPS.Gameplay
         private void moveCameraServerRpc(float a_CameraVerticalAngle)
         {
             PlayerCamera.transform.localEulerAngles = new Vector3(a_CameraVerticalAngle, 0, 0);
+        }
+
+        [ClientRpc]
+        private void ApplyCharacterMovementsClientRpc(Vector3 a_CharacterVelocity)
+        {
+            Vector3 capsuleBottomBeforeMove = GetCapsuleBottomHemisphere();
+            Vector3 capsuleTopBeforeMove = GetCapsuleTopHemisphere(m_Controller.height);
+            m_Controller.Move(a_CharacterVelocity * Time.deltaTime);
+
+            // detect obstructions to adjust velocity accordingly
+            m_LatestImpactSpeed = Vector3.zero;
+            if (Physics.CapsuleCast(capsuleBottomBeforeMove, capsuleTopBeforeMove, m_Controller.radius,
+                a_CharacterVelocity.normalized, out RaycastHit hit, a_CharacterVelocity.magnitude * Time.deltaTime, -1,
+                QueryTriggerInteraction.Ignore))
+            {
+                // We remember the last impact speed because the fall damage logic might need it
+                m_LatestImpactSpeed = a_CharacterVelocity;
+
+                a_CharacterVelocity = Vector3.ProjectOnPlane(a_CharacterVelocity, hit.normal);
+            }
+        }
+
+        [ServerRpc]
+        private void movePlayerServerRpc(Vector3 a_CharacterVelocity)
+        {
+            CharacterVelocity = a_CharacterVelocity;
+            Vector3 capsuleBottomBeforeMove = GetCapsuleBottomHemisphere();
+            Vector3 capsuleTopBeforeMove = GetCapsuleTopHemisphere(m_Controller.height);
+            m_Controller.Move(CharacterVelocity * Time.deltaTime);
+
+            // detect obstructions to adjust velocity accordingly
+            m_LatestImpactSpeed = Vector3.zero;
+            if (Physics.CapsuleCast(capsuleBottomBeforeMove, capsuleTopBeforeMove, m_Controller.radius,
+                CharacterVelocity.normalized, out RaycastHit hit, CharacterVelocity.magnitude * Time.deltaTime, -1,
+                QueryTriggerInteraction.Ignore))
+            {
+                // We remember the last impact speed because the fall damage logic might need it
+                m_LatestImpactSpeed = CharacterVelocity;
+
+                CharacterVelocity = Vector3.ProjectOnPlane(CharacterVelocity, hit.normal);
+            }
         }
 
         void OnDie()
