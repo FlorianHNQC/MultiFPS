@@ -286,6 +286,8 @@ namespace Unity.FPS.Gameplay
             }
 
         }
+
+
         [ServerRpc(RequireOwnership = false)]
         private void MovementsServerRPC(bool isSprinting, float a_SprintSpeedModifier, Vector3 MoveInput, bool isGrounded, float maxSpeedOnGround,
             bool isCrouching, float maxSpeedCrouchedRatio, Vector3 characterVelocity, bool jumpInputDown, float a_FootstepDistanceCounter, float accelerationSpeedInAir,
@@ -393,9 +395,7 @@ namespace Unity.FPS.Gameplay
         }
 
 
-
-
-        [ServerRpc(RequireOwnership = false)]
+        [ServerRpc]
         private void MoveCameraServerRPC(Vector3 a_position, Quaternion a_rotation, float a_verticalAngle, ushort NetID )
         {
             MoveCameraClientRPC(a_position, a_rotation, a_verticalAngle, NetID);
