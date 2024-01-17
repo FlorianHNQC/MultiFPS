@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Unity.FPS.Game;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using Unity.Netcode.Components;
 
 namespace Unity.FPS.AI
 {
@@ -99,7 +99,7 @@ namespace Unity.FPS.AI
         RendererIndexData m_EyeRendererData;
         MaterialPropertyBlock m_EyeColorMaterialPropertyBlock;
 
-        [SerializeField] private NetworkAnimator animator;
+        [SerializeField] private NetworkAnimator n_Animator;
         public PatrolPath PatrolPath { get; set; }
         public GameObject KnownDetectedTarget => DetectionModule.KnownDetectedTarget;
         public bool IsTargetInAttackRange => DetectionModule.IsTargetInAttackRange;

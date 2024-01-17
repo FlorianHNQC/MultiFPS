@@ -2,10 +2,11 @@
 using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.Netcode;
 
 namespace Unity.FPS.AI
 {
-    public class DetectionModule : MonoBehaviour
+    public class DetectionModule : NetworkBehaviour
     {
         [Tooltip("The point representing the source of target-detection raycasts for the enemy AI")]
         public Transform DetectionSourcePoint;
@@ -20,7 +21,7 @@ namespace Unity.FPS.AI
         public float KnownTargetTimeout = 4f;
 
         [Tooltip("Optional animator for OnShoot animations")]
-        public Animator Animator;
+        public Unity.Netcode.Components.NetworkAnimator n_Animator;
 
         public UnityAction onDetectedTarget;
         public UnityAction onLostTarget;
@@ -124,17 +125,26 @@ namespace Unity.FPS.AI
             TimeLastSeenTarget = Time.time;
             KnownDetectedTarget = damageSource;
 
-            if (Animator)
+            if (n_Animator)
             {
-                Animator.SetTrigger(k_AnimOnDamagedParameter);
+                n_Animator.SetTrigger(k_AnimOnDamagedParameter);
             }
         }
 
         public virtual void OnAttack()
         {
-            if (Animator)
+            if (n_Animator)
             {
-                Animator.SetTrigger(k_AnimAttackParameter);
+                n_Animator.SetTrigger(k_AnimAttackParameter);
+            }
+        }
+
+        [ServerRpc]
+        public virtual void OnAttackServerRpc()
+        {
+            if (n_Animator)
+            {
+                n_Animator.SetTrigger(k_AnimAttackParameter);
             }
         }
     }
