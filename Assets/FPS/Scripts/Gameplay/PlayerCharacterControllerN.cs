@@ -404,10 +404,6 @@ namespace Unity.FPS.Gameplay
         [ClientRpc]
         private void MoveCameraClientRPC(Vector3 a_position,Quaternion a_rotation, float a_verticalAngle, ushort NetID)
         {
-            Debug.Log("Roation autres client " + NetworkBehaviourId + " net id " + NetID + " ownership " + IsOwner);
-            //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
-            // horizontal character rotation
-
             if (!IsOwner)
             {
                 {
