@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
 using System.Collections;
+using UnityEngine.UIElements;
 
 namespace Unity.FPS.Gameplay
 {
@@ -248,6 +249,7 @@ namespace Unity.FPS.Gameplay
             if (IsServer && IsLocalPlayer)
             {
                 HandleCharacterMovement();
+                MoveCameraClientRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle, NetworkBehaviourId);
             }
             else if (IsLocalPlayer)
             {
@@ -270,11 +272,10 @@ namespace Unity.FPS.Gameplay
 
                     // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
                     PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
-                    if(IsOwnedByServer)
-                    {
-                        //MoveCameraServerRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle, NetworkBehaviourId);
 
-                    }
+                    MoveCameraServerRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle, NetworkBehaviourId);
+
+                    
                 }
 
                 MovementsServerRPC(m_InputHandler.GetSprintInputHeld(), SprintSpeedModifier, m_InputHandler.GetMoveInput(), IsGrounded,
@@ -403,11 +404,12 @@ namespace Unity.FPS.Gameplay
         [ClientRpc]
         private void MoveCameraClientRPC(Vector3 a_position,Quaternion a_rotation, float a_verticalAngle, ushort NetID)
         {
-            Debug.Log("Roation autres client");
-            if (NetworkBehaviourId != NetID)
+            Debug.Log("Roation autres client " + NetworkBehaviourId + " net id " + NetID + " ownership " + IsOwner);
+            //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+            // horizontal character rotation
+
+            if (!IsOwner)
             {
-                //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
-                // horizontal character rotation
                 {
                     // rotate the transform with the input speed around its local Y axis
                     transform.SetPositionAndRotation(a_position, a_rotation);
