@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
-public class Elevator : MonoBehaviour
+public class Elevator : NetworkBehaviour
 {
     public float targetY;
     public float speed = 4.0f;
-    public float waitTime = 3.0f;
+    //public float waitTime = 3.0f;
 
     private float originalY;
     private bool movingToTarget = true;
@@ -13,23 +14,37 @@ public class Elevator : MonoBehaviour
     void Start()
     {
         originalY = transform.position.y;
-        StartCoroutine(Move());
+        //StartCoroutine(Move());
     }
 
-    IEnumerator Move()
+    private void Update()
     {
-        while (true)
+        if (IsServer)
         {
-            float targetPositionY = movingToTarget ? targetY : originalY;
-            Vector3 targetPosition = new Vector3(transform.position.x, targetPositionY, transform.position.z);
-
-            while (Mathf.Abs(transform.position.y - targetPositionY) > 0.01f)
+            if (movingToTarget == true)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-                yield return null;
+                if (transform.position.y <= targetY)
+                {
+                    transform.Translate(Vector3.up * Time.deltaTime * speed);
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, targetY, transform.position.z);
+                    movingToTarget = false;
+                }
             }
-            yield return new WaitForSeconds(waitTime);
-            movingToTarget = !movingToTarget;
+            else if (movingToTarget == false)
+            {
+                if (transform.position.y >= originalY)
+                {
+                    transform.Translate(-Vector3.up * Time.deltaTime * speed);
+                }
+                else
+                {
+                    transform.position = new Vector3(transform.position.x, originalY, transform.position.z);
+                    movingToTarget = true;
+                }
+            }
         }
     }
 }
