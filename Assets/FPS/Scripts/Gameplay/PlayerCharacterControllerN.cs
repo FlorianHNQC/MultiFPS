@@ -188,11 +188,9 @@ namespace Unity.FPS.Gameplay
                 for (int i = 0; i < ComponentToActivate.Count; i++)
                 {
                     Behaviour behaviourComponent = ComponentToActivate[i] as Behaviour;
-
                     behaviourComponent.enabled = true;
                    // Debug.Log("compnent activated " + behaviourComponent.name);
                 }
-
             }
             else
             {
@@ -253,49 +251,37 @@ namespace Unity.FPS.Gameplay
             }
             else if (IsLocalPlayer)
             {
-            // HandleCharacterMovementServerRPC();
-//                Debug.Log("2 " + m_CameraVerticalAngle);
-                MoveServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+                //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+                // horizontal character rotation
+                {
+                    // rotate the transform with the input speed around its local Y axis
+                    transform.Rotate(
+                        new Vector3(0f, (m_InputHandler.GetLookInputsHorizontal() * RotationSpeed * RotationMultiplier),
+                            0f), Space.Self);
+                }
+
+                // vertical camera rotation
+                {
+                    // add vertical inputs to the camera's vertical angle
+                    m_CameraVerticalAngle += m_InputHandler.GetLookInputsVertical() * RotationSpeed * RotationMultiplier;
+
+                    // limit the camera's vertical angle to min/max
+                    m_CameraVerticalAngle = Mathf.Clamp(m_CameraVerticalAngle, -89f, 89f);
+
+                    // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
+                    PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+
+                        MoveCameraServerRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle,  NetworkBehaviourId);                   
+                }
+
                 MovementsServerRPC(m_InputHandler.GetSprintInputHeld(), SprintSpeedModifier, m_InputHandler.GetMoveInput(), IsGrounded,
                     MaxSpeedOnGround, IsCrouching, MaxSpeedCrouchedRatio, CharacterVelocity, m_InputHandler.GetJumpInputDown(), m_FootstepDistanceCounter,
                     AccelerationSpeedInAir, MaxSpeedInAir, GravityDownForce);
-                moveCameraServerRpc(m_CameraVerticalAngle);
-                //                ApplyCharacterMovementsClientRpc(GetCapsuleBottomHemisphere(), GetCapsuleTopHemisphere(m_Controller.height));
-//                movePlayerServerRpc(cVelocity);
-                PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+
                 m_Controller.Move(CharacterVelocity * Time.deltaTime);
-                //               Debug.Log("1 " + m_CameraVerticalAngle);
             }
-
-
 
         }
-
-        [ServerRpc]
-        private void MoveServerRPC(float GetLookInputsHorizontal, float GetLookInputsVertical, float a_CameraVerticalAngle,Vector3 GetMoveInput, float a_RotationSpeed, float a_RotationMultiplier) 
-        {
-            //Debug.Log("moveserverrpc");
-            // horizontal character rotation
-            {
-                // rotate the transform with the input speed around its local Y axis
-                transform.Rotate(
-                    new Vector3(0f, (GetLookInputsHorizontal * a_RotationSpeed * a_RotationMultiplier),
-                        0f), Space.Self);
-            }
-
-            {
-                // add vertical inputs to the camera's vertical angle
-                a_CameraVerticalAngle += GetLookInputsVertical * a_RotationSpeed * a_RotationMultiplier;
-
-                // limit the camera's vertical angle to min/max
-                a_CameraVerticalAngle = Mathf.Clamp(a_CameraVerticalAngle, -89f, 89f);
-
-                // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
-                MoveCameraClientRPC(a_CameraVerticalAngle);
-                //PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
-            }
-        }
-
         [ServerRpc]
         private void MovementsServerRPC(bool isSprinting, float a_SprintSpeedModifier, Vector3 MoveInput, bool isGrounded, float maxSpeedOnGround,
             bool isCrouching, float maxSpeedCrouchedRatio, Vector3 characterVelocity, bool jumpInputDown, float a_FootstepDistanceCounter, float accelerationSpeedInAir,
@@ -402,16 +388,34 @@ namespace Unity.FPS.Gameplay
             }*/
         }
 
-        [ClientRpc]
-        private void MoveCameraClientRPC(float a_CameraVerticalAngle)
-        {
-            m_CameraVerticalAngle = a_CameraVerticalAngle;
-            //PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
-        }
+
+
+
         [ServerRpc]
-        private void moveCameraServerRpc(float a_CameraVerticalAngle)
+        private void MoveCameraServerRPC(Vector3 a_position, Quaternion a_rotation, float a_verticalAngle, ushort NetID )
         {
-            PlayerCamera.transform.localEulerAngles = new Vector3(a_CameraVerticalAngle, 0, 0);
+            MoveCameraClientRPC(a_position, a_rotation, a_verticalAngle, NetID);
+        }
+
+        [ClientRpc]
+        private void MoveCameraClientRPC(Vector3 a_position,Quaternion a_rotation, float a_verticalAngle, ushort NetID)
+        {
+            if(NetworkBehaviourId != NetID)
+            {
+                //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
+                // horizontal character rotation
+                {
+                    // rotate the transform with the input speed around its local Y axis
+                    transform.SetPositionAndRotation(a_position, a_rotation);
+                }
+                // vertical camera rotation
+                {
+                    // apply the vertical angle as a local rotation to the camera transform along its right a
+                    PlayerCamera.transform.localEulerAngles = new Vector3(a_verticalAngle, 0, 0);
+                }
+                Debug.Log("Roation autres client");
+            }
+           
         }
 
         [ClientRpc]
