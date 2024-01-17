@@ -270,8 +270,11 @@ namespace Unity.FPS.Gameplay
 
                     // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
                     PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+                    if(IsOwnedByServer)
+                    {
+                        //MoveCameraServerRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle, NetworkBehaviourId);
 
-                        MoveCameraServerRPC(gameObject.transform.position, gameObject.transform.rotation, m_CameraVerticalAngle,  NetworkBehaviourId);                   
+                    }
                 }
 
                 MovementsServerRPC(m_InputHandler.GetSprintInputHeld(), SprintSpeedModifier, m_InputHandler.GetMoveInput(), IsGrounded,
@@ -282,7 +285,7 @@ namespace Unity.FPS.Gameplay
             }
 
         }
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void MovementsServerRPC(bool isSprinting, float a_SprintSpeedModifier, Vector3 MoveInput, bool isGrounded, float maxSpeedOnGround,
             bool isCrouching, float maxSpeedCrouchedRatio, Vector3 characterVelocity, bool jumpInputDown, float a_FootstepDistanceCounter, float accelerationSpeedInAir,
             float maxSpeedInAir, float gravityDownForce)
@@ -391,7 +394,7 @@ namespace Unity.FPS.Gameplay
 
 
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void MoveCameraServerRPC(Vector3 a_position, Quaternion a_rotation, float a_verticalAngle, ushort NetID )
         {
             MoveCameraClientRPC(a_position, a_rotation, a_verticalAngle, NetID);
@@ -400,7 +403,8 @@ namespace Unity.FPS.Gameplay
         [ClientRpc]
         private void MoveCameraClientRPC(Vector3 a_position,Quaternion a_rotation, float a_verticalAngle, ushort NetID)
         {
-            if(NetworkBehaviourId != NetID)
+            Debug.Log("Roation autres client");
+            if (NetworkBehaviourId != NetID)
             {
                 //MoveCameraServerRPC(m_InputHandler.GetLookInputsHorizontal(), m_InputHandler.GetLookInputsVertical(), m_CameraVerticalAngle, m_InputHandler.GetMoveInput(), RotationSpeed, RotationMultiplier);
                 // horizontal character rotation
@@ -413,7 +417,7 @@ namespace Unity.FPS.Gameplay
                     // apply the vertical angle as a local rotation to the camera transform along its right a
                     PlayerCamera.transform.localEulerAngles = new Vector3(a_verticalAngle, 0, 0);
                 }
-                Debug.Log("Roation autres client");
+
             }
            
         }
@@ -438,7 +442,7 @@ namespace Unity.FPS.Gameplay
             }
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void movePlayerServerRpc(Vector3 a_CharacterVelocity)
         {
             CharacterVelocity = a_CharacterVelocity;
