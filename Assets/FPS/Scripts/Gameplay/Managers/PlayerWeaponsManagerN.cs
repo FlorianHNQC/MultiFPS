@@ -202,8 +202,11 @@ namespace Unity.FPS.Gameplay
             UpdateWeaponSwitching();
 
             // Set final weapon socket position based on all the combined animation influences
-            WeaponParentSocket.localPosition =
-                m_WeaponMainLocalPosition + m_WeaponBobLocalPosition + m_WeaponRecoilLocalPosition;
+            if(m_PlayerCharacterControllerN.IsDead == false)
+            {
+                WeaponParentSocket.localPosition = m_WeaponMainLocalPosition + m_WeaponBobLocalPosition + m_WeaponRecoilLocalPosition;
+            }
+            
         }
 
         // Sets the FOV of the main camera and the weapon camera simultaneously

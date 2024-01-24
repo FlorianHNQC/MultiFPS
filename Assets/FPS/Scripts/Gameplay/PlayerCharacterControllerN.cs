@@ -129,6 +129,7 @@ namespace Unity.FPS.Gameplay
         [SerializeField] CharacterController m_Controller;
         [SerializeField] PlayerWeaponsManagerN m_WeaponsManager;
         [SerializeField] Actor m_Actor;
+        [SerializeField] Transform spawnpoint;
         Vector3 m_GroundNormal;
         Vector3 m_CharacterVelocity;
         Vector3 m_LatestImpactSpeed;
@@ -175,11 +176,13 @@ namespace Unity.FPS.Gameplay
 
             m_Controller.enableOverlapRecovery = true;
 
-            m_Health.OnDie += OnDie;
+            m_Health.OnDie += OnDieServerRpc;
 
             // force the crouch state to false when starting
             SetCrouchingState(false, true);
             UpdateCharacterHeight(true);
+
+            spawnpoint = GameObject.Find("PlayerSpawnPoint").transform;
         }
 
         void Update()
@@ -461,26 +464,31 @@ namespace Unity.FPS.Gameplay
             }
         }
 
-        void OnDie()
+        [ServerRpc(RequireOwnership = false)]
+        void OnDieServerRpc()
         {
             IsDead = true;
 
             // Tell the weapons manager to switch to a non-existing weapon in order to lower the weapon
-            m_WeaponsManager.SwitchToWeaponIndex(-1, true);
+            //m_WeaponsManager.SwitchToWeaponIndex(-1, true);
             MaxSpeedOnGround = 0;
             JumpForce = 0;
-            //EventManager.Broadcast(Events.PlayerDeathEvent); 
-            Invoke("Respawn", 5f);
+            Invoke("RespawnServerRpc", 5f);
         }
 
-        void Respawn()
+        [ServerRpc(RequireOwnership = false)]
+        void RespawnServerRpc()
         {
             IsDead = false;
             Debug.Log("Not dead");
-            m_WeaponsManager.SwitchToWeaponIndex(0, false);
+            //m_WeaponsManager.SwitchToWeaponIndex(0, false);
+
+            m_Controller.enabled = false;
+            m_Controller.transform.position = spawnpoint.position;
+            m_Controller.enabled = true;
+            //transform.position = spawnpoint.position;
             MaxSpeedOnGround = 10;
             JumpForce = 9;
-            EventManager.Broadcast(Events.PlayerRespawnEvent);
         }
 
         void GroundCheck()

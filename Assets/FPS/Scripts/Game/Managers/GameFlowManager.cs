@@ -40,13 +40,6 @@ namespace Unity.FPS.Game
         void Awake()
         {
             EventManager.AddListener<AllObjectivesCompletedEvent>(OnAllObjectivesCompleted);
-            //EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
-            //EventManager.AddListener<PlayerRespawnEvent>(OnPlayerRespawn);
-        }
-
-        private void OnPlayerRespawn(PlayerRespawnEvent obj)
-        {
-            throw new NotImplementedException();
         }
 
         void Start()
@@ -73,7 +66,6 @@ namespace Unity.FPS.Game
         }
 
         void OnAllObjectivesCompleted(AllObjectivesCompletedEvent evt) => EndGame(true);
-        void OnPlayerDeath(PlayerDeathEvent evt) => EndGame(false);
 
         void EndGame(bool win)
         {
@@ -119,7 +111,6 @@ namespace Unity.FPS.Game
         void OnDestroy()
         {
             EventManager.RemoveListener<AllObjectivesCompletedEvent>(OnAllObjectivesCompleted);
-            EventManager.RemoveListener<PlayerDeathEvent>(OnPlayerDeath);
         }
 
         IEnumerator Timer()
@@ -145,5 +136,7 @@ namespace Unity.FPS.Game
             float seconds = Mathf.FloorToInt(timeToDisplay % 60);
             timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }*/
+
+
     }
 }
