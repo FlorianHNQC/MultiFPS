@@ -467,8 +467,20 @@ namespace Unity.FPS.Gameplay
 
             // Tell the weapons manager to switch to a non-existing weapon in order to lower the weapon
             m_WeaponsManager.SwitchToWeaponIndex(-1, true);
+            MaxSpeedOnGround = 0;
+            JumpForce = 0;
+            //EventManager.Broadcast(Events.PlayerDeathEvent); 
+            Invoke("Respawn", 5f);
+        }
 
-            EventManager.Broadcast(Events.PlayerDeathEvent);
+        void Respawn()
+        {
+            IsDead = false;
+            Debug.Log("Not dead");
+            m_WeaponsManager.SwitchToWeaponIndex(0, false);
+            MaxSpeedOnGround = 10;
+            JumpForce = 9;
+            EventManager.Broadcast(Events.PlayerRespawnEvent);
         }
 
         void GroundCheck()

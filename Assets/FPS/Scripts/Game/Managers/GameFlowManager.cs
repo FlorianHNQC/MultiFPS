@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unity.FPS.Game
@@ -27,6 +30,7 @@ namespace Unity.FPS.Game
         [Header("Lose")] [Tooltip("This string has to be the name of the scene you want to load when losing")]
         public string LoseSceneName = "LoseScene";
 
+        public float timer;
 
         public bool GameIsEnding { get; private set; }
 
@@ -36,7 +40,13 @@ namespace Unity.FPS.Game
         void Awake()
         {
             EventManager.AddListener<AllObjectivesCompletedEvent>(OnAllObjectivesCompleted);
-            EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
+            //EventManager.AddListener<PlayerDeathEvent>(OnPlayerDeath);
+            //EventManager.AddListener<PlayerRespawnEvent>(OnPlayerRespawn);
+        }
+
+        private void OnPlayerRespawn(PlayerRespawnEvent obj)
+        {
+            throw new NotImplementedException();
         }
 
         void Start()
@@ -111,5 +121,29 @@ namespace Unity.FPS.Game
             EventManager.RemoveListener<AllObjectivesCompletedEvent>(OnAllObjectivesCompleted);
             EventManager.RemoveListener<PlayerDeathEvent>(OnPlayerDeath);
         }
+
+        IEnumerator Timer()
+        {
+            yield return new WaitForSeconds(1f);
+            timer--;
+
+            if (timer>0)
+            {
+                StartCoroutine(Timer());
+                float minutes = Mathf.FloorToInt(timer / 60);
+                float seconds = Mathf.FloorToInt(timer % 60);
+            }
+            else
+            {
+                EndGame(false);
+            }
+        }
+
+        /*void DisplayTime(float timeToDisplay)
+        {
+            float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+            float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+            timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }*/
     }
 }

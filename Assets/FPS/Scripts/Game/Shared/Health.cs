@@ -81,6 +81,17 @@ namespace Unity.FPS.Game
             {
                 m_IsDead = true;
                 OnDie?.Invoke();
+                Invoke("Respawn", 5f);
+            }
+        }
+
+        void Respawn()
+        {
+            if(m_IsDead == true)
+            {
+                CurrentHealth = MaxHealth;
+                m_IsDead = false;
+                OnDamaged?.Invoke(MaxHealth, null);
             }
         }
     }
