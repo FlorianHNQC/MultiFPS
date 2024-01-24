@@ -8,12 +8,12 @@ namespace Unity.FPS.Gameplay
     {
         public KeyCode ActivateKey = KeyCode.F12;
 
-        PlayerCharacterController m_PlayerCharacterController;
+        PlayerCharacterControllerN m_PlayerCharacterController;
 
         void Awake()
         {
-            m_PlayerCharacterController = FindObjectOfType<PlayerCharacterController>();
-            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, TeleportPlayer>(
+            m_PlayerCharacterController = FindObjectOfType<PlayerCharacterControllerN>();
+            DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterControllerN, TeleportPlayer>(
                 m_PlayerCharacterController, this);
         }
 

@@ -19,7 +19,7 @@ namespace Unity.FPS.UI
         void Start()
         {
             m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManagerN>();
-            DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, WeaponHUDManager>(m_PlayerWeaponsManager,
+            DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManagerN, WeaponHUDManager>(m_PlayerWeaponsManager,
                 this);
 
             WeaponController activeWeapon = m_PlayerWeaponsManager.GetActiveWeapon();

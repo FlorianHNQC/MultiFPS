@@ -20,7 +20,7 @@ namespace Unity.FPS.Gameplay
             if (IsCompleted)
                 return;
 
-            var player = other.GetComponent<PlayerCharacterController>();
+            var player = other.GetComponent<PlayerCharacterControllerN>();
             // test if the other collider contains a PlayerCharacterController, then complete
             if (player != null)
             {

@@ -50,7 +50,7 @@ namespace Unity.FPS.Gameplay
 
         void OnTriggerEnter(Collider other)
         {
-            PlayerCharacterController pickingPlayer = other.GetComponent<PlayerCharacterController>();
+            PlayerCharacterControllerN pickingPlayer = other.GetComponent<PlayerCharacterControllerN>();
 
             if (pickingPlayer != null)
             {
@@ -62,7 +62,7 @@ namespace Unity.FPS.Gameplay
             }
         }
 
-        protected virtual void OnPicked(PlayerCharacterController playerController)
+        protected virtual void OnPicked(PlayerCharacterControllerN playerController)
         {
             PlayPickupFeedback();
         }

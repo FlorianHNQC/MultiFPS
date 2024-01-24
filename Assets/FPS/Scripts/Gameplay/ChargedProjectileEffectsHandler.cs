@@ -15,15 +15,15 @@ namespace Unity.FPS.Gameplay
         public MinMaxColor Color;
 
         MeshRenderer[] m_AffectedRenderers;
-        ProjectileBase m_ProjectileBase;
+        ProjectileStandard m_ProjectileBase;
 
         void OnEnable()
         {
-            m_ProjectileBase = GetComponent<ProjectileBase>();
-            DebugUtility.HandleErrorIfNullGetComponent<ProjectileBase, ChargedProjectileEffectsHandler>(
+            m_ProjectileBase = GetComponent<ProjectileStandard>();
+            DebugUtility.HandleErrorIfNullGetComponent<ProjectileStandard, ChargedProjectileEffectsHandler>(
                 m_ProjectileBase, this, gameObject);
 
-            m_ProjectileBase.OnShoot += OnShoot;
+            //m_ProjectileBase.OnShoot += OnShoot;
 
             m_AffectedRenderers = ChargingObject.GetComponentsInChildren<MeshRenderer>();
             foreach (var ren in m_AffectedRenderers)

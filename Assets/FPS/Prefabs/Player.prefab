@@ -507,10 +507,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7253983127304857660}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
+  m_Script: {fileID: 11500000, guid: ed824e4c7ce12d04c99c6884e7362489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 100
+  MaxHealth: 10
   CriticalHealthRatio: 0.3
 --- !u!143 &3122855503829242450
 CharacterController:
@@ -539,11 +539,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7253983127304857660}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b0ce1bb69c96b49a7ac1098a7f5796, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bea8248345796b4cbe836f3d20e9fe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageMultiplier: 1
-  SensibilityToSelfdamage: 0.25
+  Affiliation: 0
+  AimPoint: {fileID: 3625601170703586302}
 --- !u!82 &1272397862697293493
 AudioSource:
   m_ObjectHideFlags: 0
@@ -767,11 +767,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7253983127304857660}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b4c4e7c5d6cd34bb04cb46517b4e23, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d4fb22f177bc9a448765765b7b7cdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Affiliation: 0
-  AimPoint: {fileID: 3625601170703586302}
+  DamageMultiplier: 1
+  SensibilityToSelfdamage: 0.5
 --- !u!114 &5236754582838835326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +907,8 @@ MonoBehaviour:
   FpsWeaponLayer:
     serializedVersion: 2
     m_Bits: 1024
+  m_PlayerCharacterControllerN: {fileID: 7234085047364635348}
+  hasFired: 0
 --- !u!114 &8085401522418160859
 MonoBehaviour:
   m_ObjectHideFlags: 0

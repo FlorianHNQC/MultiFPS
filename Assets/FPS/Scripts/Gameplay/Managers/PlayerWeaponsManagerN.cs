@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -85,7 +86,8 @@ namespace Unity.FPS.Gameplay
 
         WeaponController[] m_WeaponSlots = new WeaponController[9]; // 9 available weapon slots
         PlayerInputHandler m_InputHandler;
-        PlayerCharacterControllerN m_PlayerCharacterControllerN;
+        WeaponController activeWeapon;
+        [SerializeField] public PlayerCharacterControllerN m_PlayerCharacterControllerN;
         float m_WeaponBobFactor;
         Vector3 m_LastCharacterPosition;
         Vector3 m_WeaponMainLocalPosition;
@@ -95,6 +97,8 @@ namespace Unity.FPS.Gameplay
         float m_TimeStartedWeaponSwitch;
         WeaponSwitchState m_WeaponSwitchState;
         int m_WeaponSwitchNewWeaponIndex;
+
+        public bool hasFired;
 
         void Start()
         {
@@ -120,13 +124,14 @@ namespace Unity.FPS.Gameplay
             }
 
             SwitchWeapon(true);
+            // shoot handling
+            activeWeapon = GetActiveWeapon();
+            activeWeapon.weaponManager = this;
+            //Debug.Log("activeWeapon.weaponManager " + activeWeapon.weaponManager);
         }
 
         void Update()
         {
-            // shoot handling
-            WeaponController activeWeapon = GetActiveWeapon();
-
             if (activeWeapon != null && activeWeapon.IsReloading)
                 return;
 
@@ -142,7 +147,7 @@ namespace Unity.FPS.Gameplay
                 IsAiming = m_InputHandler.GetAimInputHeld();
 
                 // handle shooting
-                bool hasFired = activeWeapon.HandleShootInputs(
+                activeWeapon.HandleShootInputs(
                     m_InputHandler.GetFireInputDown(),
                     m_InputHandler.GetFireInputHeld(),
                     m_InputHandler.GetFireInputReleased());
@@ -447,8 +452,10 @@ namespace Unity.FPS.Gameplay
                 {
                     // spawn the weapon prefab as child of the weapon socket
                     WeaponController weaponInstance = Instantiate(weaponPrefab, WeaponParentSocket);
+                    //weaponInstance.GetComponent<NetworkObject>().Spawn();
                     weaponInstance.transform.localPosition = Vector3.zero;
                     weaponInstance.transform.localRotation = Quaternion.identity;
+
 
                     // Set owner to this gameObject so the weapon can alter projectile/damage logic accordingly
                     weaponInstance.Owner = gameObject;

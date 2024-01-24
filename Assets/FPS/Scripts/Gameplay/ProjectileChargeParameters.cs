@@ -11,15 +11,15 @@ namespace Unity.FPS.Gameplay
         public MinMaxFloat GravityDownAcceleration;
         public MinMaxFloat AreaOfEffectDistance;
 
-        ProjectileBase m_ProjectileBase;
+        ProjectileStandard m_ProjectileBase;
 
         void OnEnable()
         {
-            m_ProjectileBase = GetComponent<ProjectileBase>();
-            DebugUtility.HandleErrorIfNullGetComponent<ProjectileBase, ProjectileChargeParameters>(m_ProjectileBase,
+            m_ProjectileBase = GetComponent<ProjectileStandard>();
+            DebugUtility.HandleErrorIfNullGetComponent<ProjectileStandard, ProjectileChargeParameters>(m_ProjectileBase,
                 this, gameObject);
 
-            m_ProjectileBase.OnShoot += OnShoot;
+            //m_ProjectileBase.OnShoot += OnShoot;
         }
 
         void OnShoot()

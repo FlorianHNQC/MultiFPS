@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.Netcode;
+using Unity.FPS.Game;
 
 namespace Unity.FPS.AI
 {
@@ -124,6 +124,17 @@ namespace Unity.FPS.AI
         {
             TimeLastSeenTarget = Time.time;
             KnownDetectedTarget = damageSource;
+
+            if (n_Animator)
+            {
+                n_Animator.SetTrigger(k_AnimOnDamagedParameter);
+            }
+        }
+        [ServerRpc]
+        public virtual void OnDamagedServerRpc()
+        {
+            TimeLastSeenTarget = Time.time;
+            //KnownDetectedTarget = damageSource;
 
             if (n_Animator)
             {

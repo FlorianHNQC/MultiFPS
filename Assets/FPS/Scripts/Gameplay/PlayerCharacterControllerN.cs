@@ -182,7 +182,7 @@ namespace Unity.FPS.Gameplay
             SetCrouchingState(false, true);
             UpdateCharacterHeight(true);
 
-            spawnpoint = GameObject.Find("PlayerSpawnPoint").transform;
+            //spawnpoint = GameObject.Find("PlayerSpawnPoint").transform;
         }
 
         void Update()

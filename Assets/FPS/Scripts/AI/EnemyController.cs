@@ -122,6 +122,7 @@ namespace Unity.FPS.AI
         WeaponController[] m_Weapons;
         NavigationModule m_NavigationModule;
 
+        public bool didFire;
         [SerializeField] List<Component> ComponentToActivate = new List<Component>();
         [SerializeField] List<Component> ComponentToDesactivate = new List<Component>();
         void Start()
@@ -443,7 +444,7 @@ namespace Unity.FPS.AI
                 return false;
 
             // Shoot the weapon
-            bool didFire = GetCurrentWeapon().HandleShootInputs(false, true, false);
+            //bool didFire = GetCurrentWeapon().HandleShootInputsServerRpc(false, true, false);
 
             if (didFire && onAttack != null)
             {

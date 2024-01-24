@@ -241,7 +241,7 @@ namespace Unity.FPS.EditorExt
 
                 if (!willBeCombined)
                 {
-                    if (!(mf.GetComponentInParent<PlayerCharacterController>() ||
+                    if (!(mf.GetComponentInParent<PlayerCharacterControllerN>() ||
                           mf.GetComponentInParent<EnemyController>() ||
                           mf.GetComponentInParent<Pickup>() ||
                           mf.GetComponentInParent<Objective>()))

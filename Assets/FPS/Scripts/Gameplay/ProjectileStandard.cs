@@ -1,11 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Networking.Types;
 
 namespace Unity.FPS.Gameplay
 {
-    public class ProjectileStandard : ProjectileBase
+    public class ProjectileStandard : NetworkBehaviour
     {
+        [SerializeField] public NetworkObject OwnerGameobject { get; private set; }
+        [SerializeField] public PlayerWeaponsManagerN playerWeaponsManager { get; private set; }
+        public Vector3 InitialPosition { get; private set; }
+        public Vector3 InitialDirection { get; private set; }
+        public Vector3 InheritedMuzzleVelocity { get; private set; }
+        public float InitialCharge { get; private set; }
+
+
+        [SerializeField] public WeaponController m_weaponController;
+
+        public void Shoot(ServerRpcParams s = default)
+        {
+            OwnerGameobject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(s.Receive.SenderClientId);
+            Debug.Log(" name " + OwnerGameobject.name);
+
+            if (OwnerGameobject.TryGetComponent(out PlayerWeaponsManagerN out_playerWeaponsManager))
+            {
+                playerWeaponsManager = out_playerWeaponsManager;
+            }
+
+            InitialPosition = transform.position;
+            InitialDirection = transform.forward;
+            InheritedMuzzleVelocity = m_weaponController.MuzzleWorldVelocity;
+            InitialCharge = m_weaponController.CurrentCharge;
+
+            OnShoot();
+        }
+
         [Header("General")] [Tooltip("Radius of this projectile's collision detection")]
         public float Radius = 0.01f;
 
@@ -68,66 +100,66 @@ namespace Unity.FPS.Gameplay
 
         void OnEnable()
         {
-            m_ProjectileBase = GetComponent<ProjectileBase>();
-            DebugUtility.HandleErrorIfNullGetComponent<ProjectileBase, ProjectileStandard>(m_ProjectileBase, this,
-                gameObject);
 
-            m_ProjectileBase.OnShoot += OnShoot;
+           // OnShoot += OnShoot;
 
             Destroy(gameObject, MaxLifeTime);
         }
 
-        new void OnShoot()
+        public void OnShoot()
         {
+            
             m_ShootTime = Time.time;
             m_LastRootPosition = Root.position;
             m_Velocity = transform.forward * Speed;
             m_IgnoredColliders = new List<Collider>();
-            transform.position += m_ProjectileBase.InheritedMuzzleVelocity * Time.deltaTime;
-
-            // Ignore colliders of owner
-            Collider[] ownerColliders = m_ProjectileBase.Owner.GetComponentsInChildren<Collider>();
-            m_IgnoredColliders.AddRange(ownerColliders);
+            transform.position += InheritedMuzzleVelocity * Time.deltaTime;
 
             // Handle case of player shooting (make projectiles not go through walls, and remember center-of-screen trajectory)
-            PlayerWeaponsManager playerWeaponsManager = m_ProjectileBase.Owner.GetComponent<PlayerWeaponsManager>();
             if (playerWeaponsManager)
             {
-                m_HasTrajectoryOverride = true;
+            
+                // Ignore colliders of owner
+                Collider[] ownerColliders = OwnerGameobject.GetComponentsInChildren<Collider>();
+                m_IgnoredColliders.AddRange(ownerColliders);
 
-                Vector3 cameraToMuzzle = (m_ProjectileBase.InitialPosition -
-                                          playerWeaponsManager.WeaponCamera.transform.position);
+                if (playerWeaponsManager)
+                {
+                    m_HasTrajectoryOverride = true;
 
-                m_TrajectoryCorrectionVector = Vector3.ProjectOnPlane(-cameraToMuzzle,
-                    playerWeaponsManager.WeaponCamera.transform.forward);
-                if (TrajectoryCorrectionDistance == 0)
-                {
-                    transform.position += m_TrajectoryCorrectionVector;
-                    m_ConsumedTrajectoryCorrectionVector = m_TrajectoryCorrectionVector;
-                }
-                else if (TrajectoryCorrectionDistance < 0)
-                {
-                    m_HasTrajectoryOverride = false;
-                }
+                    Vector3 cameraToMuzzle = (InitialPosition - playerWeaponsManager.WeaponCamera.transform.position);
 
-                if (Physics.Raycast(playerWeaponsManager.WeaponCamera.transform.position, cameraToMuzzle.normalized,
-                    out RaycastHit hit, cameraToMuzzle.magnitude, HittableLayers, k_TriggerInteraction))
-                {
-                    if (IsHitValid(hit))
+                    m_TrajectoryCorrectionVector = Vector3.ProjectOnPlane(-cameraToMuzzle, playerWeaponsManager.WeaponCamera.transform.forward);
+                    if (TrajectoryCorrectionDistance == 0)
                     {
-                        OnHit(hit.point, hit.normal, hit.collider);
+                        transform.position += m_TrajectoryCorrectionVector;
+                        m_ConsumedTrajectoryCorrectionVector = m_TrajectoryCorrectionVector;
+                    }
+                    else if (TrajectoryCorrectionDistance < 0)
+                    {
+                        m_HasTrajectoryOverride = false;
+                    }
+
+                    if (Physics.Raycast(playerWeaponsManager.WeaponCamera.transform.position, cameraToMuzzle.normalized,
+                        out RaycastHit hit, cameraToMuzzle.magnitude, HittableLayers, k_TriggerInteraction))
+                    {
+                        if (IsHitValid(hit))
+                        {
+                            OnHit(hit.point, hit.normal, hit.collider);
+                        }
                     }
                 }
-            }
+            }         
         }
 
         void Update()
         {
+            
             // Move
             transform.position += m_Velocity * Time.deltaTime;
             if (InheritWeaponVelocity)
             {
-                transform.position += m_ProjectileBase.InheritedMuzzleVelocity * Time.deltaTime;
+                transform.position += InheritedMuzzleVelocity * Time.deltaTime;
             }
 
             // Drift towards trajectory override (this is so that projectiles can be centered 
@@ -225,9 +257,12 @@ namespace Unity.FPS.Gameplay
             // damage
             if (AreaOfDamage)
             {
-                // area damage
-                AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
-                    m_ProjectileBase.Owner);
+                if (OwnerGameobject.TryGetComponent(out PlayerWeaponsManagerN out_playerWeaponsManager))
+                {
+                    PlayerWeaponsManagerN playerWeaponsManager = out_playerWeaponsManager;
+                    // area damage
+                    AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction, out_playerWeaponsManager.gameObject);
+                }
             }
             else
             {
@@ -235,7 +270,11 @@ namespace Unity.FPS.Gameplay
                 Damageable damageable = collider.GetComponent<Damageable>();
                 if (damageable)
                 {
-                    damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                    if (OwnerGameobject.TryGetComponent(out PlayerWeaponsManagerN out_playerWeaponsManager))
+                    {
+                        PlayerWeaponsManagerN playerWeaponsManager = out_playerWeaponsManager;
+                        damageable.InflictDamage(Damage, false, out_playerWeaponsManager.gameObject);
+                    }
                 }
             }
 

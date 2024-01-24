@@ -56,7 +56,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 594405854206730852}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b0ce1bb69c96b49a7ac1098a7f5796, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d4fb22f177bc9a448765765b7b7cdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DamageMultiplier: 1
@@ -161,7 +161,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1259297160116020545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b0ce1bb69c96b49a7ac1098a7f5796, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d4fb22f177bc9a448765765b7b7cdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DamageMultiplier: 1
@@ -184,6 +184,8 @@ GameObject:
   - component: {fileID: 1345943282138014167}
   - component: {fileID: 3444686158330356048}
   - component: {fileID: 3689064528673933416}
+  - component: {fileID: 7886434279665422342}
+  - component: {fileID: 8286526152492468516}
   m_Layer: 0
   m_Name: Enemy_Turret
   m_TagString: Untagged
@@ -291,6 +293,7 @@ MonoBehaviour:
   AttackRangeColor: {r: 1, g: 0, b: 0, a: 1}
   DetectionRangeColor: {r: 0, g: 0, b: 1, a: 1}
   n_Animator: {fileID: 2183828829906984839}
+  didFire: 0
   ComponentToActivate:
   - {fileID: 1345943282138014167}
   ComponentToDesactivate: []
@@ -303,10 +306,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2015434656898269652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
+  m_Script: {fileID: 11500000, guid: ed824e4c7ce12d04c99c6884e7362489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 400
+  MaxHealth: 10
   CriticalHealthRatio: 0.3
 --- !u!114 &3464315327790461765
 MonoBehaviour:
@@ -360,11 +363,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2015434656898269652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b4c4e7c5d6cd34bb04cb46517b4e23, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d4fb22f177bc9a448765765b7b7cdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Affiliation: 0
-  AimPoint: {fileID: 7886326314632062843}
+  DamageMultiplier: 1
+  SensibilityToSelfdamage: 0.5
 --- !u!114 &1345943282138014167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,6 +435,34 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &7886434279665422342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015434656898269652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed824e4c7ce12d04c99c6884e7362489, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHealth: 10
+  CriticalHealthRatio: 0.3
+--- !u!114 &8286526152492468516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015434656898269652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bea8248345796b4cbe836f3d20e9fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Affiliation: 0
+  AimPoint: {fileID: 0}
 --- !u!1 &2201913640410082181
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,7 +543,7 @@ MonoBehaviour:
   DetectionRange: 30
   AttackRange: 35
   KnownTargetTimeout: 4
-  Animator: {fileID: 0}
+  n_Animator: {fileID: 0}
 --- !u!1 &7448957880145452174
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,10 +766,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8093968053717355753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ad90ba0b1477764da373f5ec01a8cb5, type: 3}
+  m_Script: {fileID: 11500000, guid: d1d7009d23b5da64981d3b380d0a9a3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WeaponName: mg
+  WeaponName: 
   WeaponIcon: {fileID: 0}
   CrosshairDataDefault:
     CrosshairSprite: {fileID: 0}
@@ -753,7 +784,7 @@ MonoBehaviour:
   ShootType: 1
   ProjectilePrefab: {fileID: 8924682559891268397, guid: 154bfb4989fe16d439e8f3fb7c20b72b,
     type: 3}
-  DelayBetweenShots: 0.06
+  DelayBetweenShots: 0.5
   BulletSpreadAngle: 0
   BulletsPerShot: 1
   RecoilForce: 1
@@ -766,15 +797,16 @@ MonoBehaviour:
   EjectionPort: {fileID: 0}
   ShellCasingEjectionForce: 2
   ShellPoolSize: 1
-  AmmoReloadRate: Infinity
-  AmmoReloadDelay: 0.6
-  MaxAmmo: 15
+  AmmoReloadRate: 1
+  AmmoReloadDelay: 2
+  MaxAmmo: 8
   AutomaticReleaseOnCharged: 0
   MaxChargeDuration: 2
   AmmoUsedOnStartCharge: 1
-  AmmoUsageRateWhileCharging: 2
+  AmmoUsageRateWhileCharging: 1
   WeaponAnimator: {fileID: 0}
-  MuzzleFlashPrefab: {fileID: 638502610521960261}
+  MuzzleFlashPrefab: {fileID: 748781637555137343, guid: 3f5b545b9a1e74c418b061bba5bb9e2c,
+    type: 3}
   UnparentMuzzleFlash: 0
   ShootSfx: {fileID: 8300000, guid: 0d44f0cb2e91f5f4ca09aded9a1bd9ab, type: 3}
   ChangeWeaponSfx: {fileID: 0}
@@ -782,6 +814,7 @@ MonoBehaviour:
   ContinuousShootStartSfx: {fileID: 0}
   ContinuousShootLoopSfx: {fileID: 0}
   ContinuousShootEndSfx: {fileID: 0}
+  weaponManager: {fileID: 0}
 --- !u!82 &2231955200838058728
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1175,12 +1208,6 @@ PrefabInstance:
 --- !u!4 &77575298412261527 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 264520514954343661, guid: 3f5b545b9a1e74c418b061bba5bb9e2c,
-    type: 3}
-  m_PrefabInstance: {fileID: 196010296121033850}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &638502610521960261 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 748781637555137343, guid: 3f5b545b9a1e74c418b061bba5bb9e2c,
     type: 3}
   m_PrefabInstance: {fileID: 196010296121033850}
   m_PrefabAsset: {fileID: 0}
