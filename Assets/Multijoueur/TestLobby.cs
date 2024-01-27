@@ -7,10 +7,14 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-public class TestLobby : MonoBehaviour
+public class TestLobby : NetworkBehaviour
 {
     [SerializeField] private GameObject listLobbyPanel;
+    [SerializeField] private TMP_InputField inputLobbyCode;
+    [SerializeField] private Button submitCode;
 
     [SerializeField] private GameObject createLobbyPanel;
     [SerializeField] private Button createLobby;
@@ -22,6 +26,11 @@ public class TestLobby : MonoBehaviour
     [SerializeField] private TMP_Text lobbyCode;
     [SerializeField] private TMP_Text lobbyNbPlayers;
 
+    [SerializeField] private Button createLobbyButton;
+
+    [SerializeField] private Button startGameButton;
+
+    public string sceneToLoad = "TestMenu";
     private Lobby hostLobby;
     private Lobby joinedLobby;
     private float heartbeatTimer;
@@ -37,10 +46,33 @@ public class TestLobby : MonoBehaviour
             if (playerNameLobby.textComponent.text != null) CreateLobby(playerNameLobby.textComponent.text);
             else CreateLobby();
         });
+        if (inputLobbyCode.textComponent.text != null) {
+            submitCode.onClick.AddListener(() =>
+            {
+                JoinLobbyByCode(inputLobbyCode.textComponent.text);
+                listLobbyPanel.SetActive(false);
+                createLobbyPanel.SetActive(false);
+                lobbyPanel.SetActive(true);
+            });
+        }
+        createLobbyButton.onClick.AddListener(() =>
+        {
+            listLobbyPanel.SetActive(false);
+            createLobbyPanel.SetActive(true);
+            lobbyPanel.SetActive(false);
+        });
+        startGameButton.onClick.AddListener(() =>
+        {
+            NetworkManager.SceneManager.LoadScene("TestMenu barth", LoadSceneMode.Additive);
+        });
     }
 
     private async void Start()
     {
+        listLobbyPanel.SetActive(true);
+        createLobbyPanel.SetActive(false);
+        lobbyPanel.SetActive(false);
+
         await UnityServices.InitializeAsync();
 
         AuthenticationService.Instance.SignedIn += () => {
@@ -120,6 +152,9 @@ public class TestLobby : MonoBehaviour
             joinedLobby = hostLobby;
 
             Debug.Log("Created " + lobby.Name + " " + lobby.MaxPlayers + " " + lobby.Id + " " + lobby.LobbyCode + joinedLobby.Data["GameMode"].Value);
+            listLobbyPanel.SetActive(false);
+            createLobbyPanel.SetActive(false);
+            lobbyPanel.SetActive(true);
         }
         catch (LobbyServiceException e)
         {
@@ -158,6 +193,7 @@ public class TestLobby : MonoBehaviour
 
     private async void JoinLobbyByCode(string lobbyCode)
     {
+        lobbyCode = lobbyCode.Substring(0, 6);
         try
         {
             JoinLobbyByCodeOptions joinLobbyByCodeOptions = new JoinLobbyByCodeOptions
