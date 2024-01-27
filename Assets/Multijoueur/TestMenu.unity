@@ -2185,18 +2185,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 832427110}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e1fea5cb3ddbc249bd0181e6766db68, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cf32814d5691ab4cb919399ccac61a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EndSceneLoadDelay: 3
-  EndGameFadeCanvasGroup: {fileID: 259980489}
-  WinSceneName: WinScene
-  DelayBeforeFadeToBlack: 4
-  WinGameMessage: 
-  DelayBeforeWinMessage: 2
-  VictorySound: {fileID: 8300000, guid: 13b59a14d34add64d84a623867546ff1, type: 3}
-  LoseSceneName: LoseScene
-  timer: 0
 --- !u!114 &832427115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2206,7 +2197,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 832427110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf10145f6bd13744c8fd10972a92ac61, type: 3}
+  m_Script: {fileID: 11500000, guid: 888c7d8f8f69c6b42a086589b6f01bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &832427116
@@ -2218,11 +2209,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 832427110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d54177cab788734b8ecb4674c6e5328, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ff5b79a45cbb1c43bebb493848a6f7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioMixers:
-  - {fileID: 24100000, guid: fcc71635aab95ff4fbdf1880bf2afa2f, type: 2}
 --- !u!114 &832427117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2232,9 +2221,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 832427110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5174b5e414847cf4a9dca6e207326c8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7bf5511aca9125140ad65bef38e90860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EndSceneLoadDelay: 3
+  EndGameFadeCanvasGroup: {fileID: 0}
+  WinSceneName: WinScene
+  DelayBeforeFadeToBlack: 4
+  WinGameMessage: 
+  DelayBeforeWinMessage: 2
+  VictorySound: {fileID: 0}
+  LoseSceneName: LoseScene
+  timer: 0
 --- !u!114 &832427118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19805,12 +19803,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eec9f03de17857a48ac47c6ae8577551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CombineParents: []
-  UseGrid: 0
-  GridCenter: {x: 0, y: 0, z: 0}
-  GridExtents: {x: 10, y: 10, z: 10}
-  GridResolution: {x: 2, y: 2, z: 2}
-  GridPreviewColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &1675236815
 Transform:
   m_ObjectHideFlags: 0

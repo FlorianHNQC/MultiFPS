@@ -145,12 +145,15 @@ namespace Unity.FPS.Gameplay
                 }
                 // handle aiming down sights
                 IsAiming = m_InputHandler.GetAimInputHeld();
+                if (m_PlayerCharacterControllerN.IsLocalPlayer && m_PlayerCharacterControllerN.IsOwner)
+                {
+                    // handle shooting
+                    activeWeapon.HandleShootInputs(
+                        m_InputHandler.GetFireInputDown(),
+                        m_InputHandler.GetFireInputHeld(),
+                        m_InputHandler.GetFireInputReleased());
 
-                // handle shooting
-                activeWeapon.HandleShootInputs(
-                    m_InputHandler.GetFireInputDown(),
-                    m_InputHandler.GetFireInputHeld(),
-                    m_InputHandler.GetFireInputReleased());
+                }
 
                 // Handle accumulating recoil
                 if (hasFired)
@@ -452,7 +455,9 @@ namespace Unity.FPS.Gameplay
                 {
                     // spawn the weapon prefab as child of the weapon socket
                     WeaponController weaponInstance = Instantiate(weaponPrefab, WeaponParentSocket);
+                    //weaponInstance.WeaponMuzzle 
                     //weaponInstance.GetComponent<NetworkObject>().Spawn();
+                    weaponInstance.m_PlayerCharacterControllerN = m_PlayerCharacterControllerN;
                     weaponInstance.transform.localPosition = Vector3.zero;
                     weaponInstance.transform.localRotation = Quaternion.identity;
 

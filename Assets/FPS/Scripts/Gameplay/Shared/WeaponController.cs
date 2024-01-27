@@ -160,7 +160,7 @@ namespace Unity.FPS.Game
         public int GetCurrentAmmo() => Mathf.FloorToInt(m_CurrentAmmo);
 
         AudioSource m_ShootAudioSource;
-
+        [SerializeField] public PlayerCharacterControllerN m_PlayerCharacterControllerN;
         public bool IsReloading { get; private set; }
 
         const string k_AnimAttackParameter = "Attack";
@@ -178,9 +178,8 @@ namespace Unity.FPS.Game
         void Awake()
         {
             m_CurrentAmmo = MaxAmmo;
-            m_LastMuzzlePosition = WeaponMuzzle.position;
-            Debug.Log("m_LastMuzzlePosition " + m_LastMuzzlePosition);
-            Debug.Log("WeaponMuzzle.position " + WeaponMuzzle.position);
+            //Debug.Log("m_LastMuzzlePosition " + m_LastMuzzlePosition);
+            //Debug.Log("WeaponMuzzle.position " + WeaponMuzzle.position);
             m_CarriedPhysicalBullets = HasPhysicalBullets ? ClipSize : 0;
 
             m_ShootAudioSource = GetComponent<AudioSource>();
@@ -208,6 +207,8 @@ namespace Unity.FPS.Game
                     m_PhysicalAmmoPool.Enqueue(shell.GetComponent<Rigidbody>());
                 }
             }
+            m_LastMuzzlePosition = WeaponMuzzle.position;
+
         }
 
         public void AddCarriablePhysicalBullets(int count) => m_CarriedPhysicalBullets = Mathf.Max(m_CarriedPhysicalBullets + count, MaxAmmo);
@@ -256,8 +257,9 @@ namespace Unity.FPS.Game
 
             if (Time.deltaTime > 0 )
             {
-                MuzzleWorldVelocity = (WeaponMuzzle.position - m_LastMuzzlePosition) / Time.deltaTime;
                 m_LastMuzzlePosition = WeaponMuzzle.position;
+                MuzzleWorldVelocity = (WeaponMuzzle.position - m_LastMuzzlePosition) / Time.deltaTime;
+                
                 
             }
 
@@ -418,7 +420,7 @@ namespace Unity.FPS.Game
             if (m_CurrentAmmo >= 1f
                 && m_LastTimeShot + DelayBetweenShots < Time.time)
             {
-                HandleShootServerRpc();
+                HandleShoot();
                 m_CurrentAmmo -= 1f;
 
                 tryShoot = true;
@@ -449,7 +451,7 @@ namespace Unity.FPS.Game
         {
             if (IsCharging)
             {
-                HandleShootServerRpc();
+                HandleShoot();
 
                 CurrentCharge = 0f;
                 IsCharging = false;
@@ -459,9 +461,10 @@ namespace Unity.FPS.Game
 
             tryRealeaseCharge =  false;
         }
-        [ServerRpc]
-        void HandleShootServerRpc()
+        //
+        void HandleShoot()
         {
+            
             int bulletsPerShotFinal = ShootType == WeaponShootType.Charge
                 ? Mathf.CeilToInt(CurrentCharge * BulletsPerShot)
                 : BulletsPerShot;
@@ -513,7 +516,19 @@ namespace Unity.FPS.Game
 
             OnShoot?.Invoke();
             OnShootProcessed?.Invoke();
+            HandleShootClientRpc();
+
         }
+
+        [ClientRpc]
+        void HandleShootClientRpc(ServerRpcParams s = default)
+        {
+            if(!m_PlayerCharacterControllerN.IsOwner)
+            {
+                HandleShoot();
+            }
+        }
+
 
         public Vector3 GetShotDirectionWithinSpread(Transform shootTransform)
         {
