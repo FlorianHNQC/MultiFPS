@@ -868,11 +868,11 @@ MonoBehaviour:
   - {fileID: 306504594}
   ComponentToDesactivate:
   - {fileID: 2824762016901674212}
-  m_Health: {fileID: 0}
-  m_InputHandler: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_WeaponsManager: {fileID: 0}
-  m_Actor: {fileID: 0}
+  m_Health: {fileID: 1360575517897679518}
+  m_InputHandler: {fileID: 2824762016901674212}
+  m_Controller: {fileID: 3122855503829242450}
+  m_WeaponsManager: {fileID: 2129022627961781568}
+  m_Actor: {fileID: 4205022973215787166}
   spawnpoint: {fileID: 0}
 --- !u!114 &2129022627961781568
 MonoBehaviour:

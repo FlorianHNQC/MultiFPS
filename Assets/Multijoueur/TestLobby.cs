@@ -323,7 +323,7 @@ public class TestLobby : NetworkBehaviour
         //Debug.Log("Players in lobby " + lobby.Name + "\nMode: " + lobby.Data["GameMode"].Value + "\nMap: " + lobby.Data["Map"].Value);
         foreach (Player player in lobby.Players)
         {
-            Debug.Log(player.Data["PlayerName"].Value);
+            //ebug.Log(player.Data["PlayerName"].Value);
         }
     }
 

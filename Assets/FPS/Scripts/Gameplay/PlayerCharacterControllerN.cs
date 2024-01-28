@@ -183,6 +183,7 @@ namespace Unity.FPS.Gameplay
             UpdateCharacterHeight(true);
 
             //spawnpoint = GameObject.Find("PlayerSpawnPoint").transform;
+            spawnpoint = transform;
         }
 
         void Update()
@@ -338,13 +339,6 @@ namespace Unity.FPS.Gameplay
                         // play sound
                         AudioSource.PlayOneShot(JumpSfx);
 
-                        // remember last time we jumped because we need to prevent snapping to ground for a short time
-/*                        m_LastTimeJumped = Time.time;
-                        HasJumpedThisFrame = true;
-
-                        // Force grounding to false
-                        IsGrounded = false;
-                        m_GroundNormal = Vector3.up;*/
                     }
                 }
 
@@ -378,23 +372,7 @@ namespace Unity.FPS.Gameplay
 
             ApplyCharacterMovementsClientRpc(a_CharacterVelocity);
             movePlayerServerRpc(a_CharacterVelocity);
-//            return a_CharacterVelocity;
-/*                // apply the final calculated velocity value as a character movement
-            Vector3 capsuleBottomBeforeMove = GetCapsuleBottomHemisphere();
-            Vector3 capsuleTopBeforeMove = GetCapsuleTopHemisphere(m_Controller.height);
-            m_Controller.Move(a_CharacterVelocity * Time.deltaTime);
 
-            // detect obstructions to adjust velocity accordingly
-            m_LatestImpactSpeed = Vector3.zero;
-            if (Physics.CapsuleCast(capsuleBottomBeforeMove, capsuleTopBeforeMove, m_Controller.radius,
-                a_CharacterVelocity.normalized, out RaycastHit hit, a_CharacterVelocity.magnitude * Time.deltaTime, -1,
-                QueryTriggerInteraction.Ignore))
-            {
-                // We remember the last impact speed because the fall damage logic might need it
-                m_LatestImpactSpeed = a_CharacterVelocity;
-
-                a_CharacterVelocity = Vector3.ProjectOnPlane(CharacterVelocity, hit.normal);
-            }*/
         }
 
 

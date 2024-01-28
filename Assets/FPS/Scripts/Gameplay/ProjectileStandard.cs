@@ -20,6 +20,7 @@ namespace Unity.FPS.Gameplay
 
         [SerializeField] public WeaponController m_weaponController;
 
+        //[ClientRpc]
         public void Shoot()
         {
             InitialPosition = transform.position;
@@ -106,7 +107,7 @@ namespace Unity.FPS.Gameplay
         {
             NetworkManager.Destroy(gameObject, MaxLifeTime);
         }
-        public void OnShoot()
+        public void OnShoot(ServerRpcParams s = default)
         {
             
             m_ShootTime = Time.time;
@@ -114,17 +115,14 @@ namespace Unity.FPS.Gameplay
             m_Velocity = transform.forward * Speed;
             m_IgnoredColliders = new List<Collider>();
             transform.position += InheritedMuzzleVelocity * Time.deltaTime;
-
+            OwnerGameobject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(s.Receive.SenderClientId);
+         
             // Handle case of player shooting (make projectiles not go through walls, and remember center-of-screen trajectory)
-            if (playerWeaponsManager)
-            {
-            
+
                 // Ignore colliders of owner
                 Collider[] ownerColliders = OwnerGameobject.GetComponentsInChildren<Collider>();
                 m_IgnoredColliders.AddRange(ownerColliders);
 
-                if (playerWeaponsManager)
-                {
                     m_HasTrajectoryOverride = true;
 
                     Vector3 cameraToMuzzle = (InitialPosition - playerWeaponsManager.WeaponCamera.transform.position);
@@ -148,8 +146,8 @@ namespace Unity.FPS.Gameplay
                             OnHit(hit.point, hit.normal, hit.collider);
                         }
                     }
-                }
-            }         
+                
+                  
         }
 
         void Update()
@@ -251,7 +249,7 @@ namespace Unity.FPS.Gameplay
 
             return true;
         }
-
+        //[ServerRpc]
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
             // damage
