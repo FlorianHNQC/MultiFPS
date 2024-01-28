@@ -104,7 +104,7 @@ public class TestLobby : NetworkBehaviour
         UpdateLobbyPrintedData();
         int currentNbPlayers = GetNbPlayer();
         if (nbPlayers != currentNbPlayers) {
-            Debug.Log("Nb players changed");
+            //Debug.Log("Nb players changed");
             EnableDisableActors(false);
             nbPlayers = currentNbPlayers;
         }
@@ -118,7 +118,7 @@ public class TestLobby : NetworkBehaviour
     {
         if (joinedLobby == null) return;
         lobbyCode.text = joinedLobby.LobbyCode;
-        lobbyNbPlayers.text = "Nb Players: " + GetNbPlayer().ToString() + "/" + joinedLobby.MaxPlayers.ToString();
+        //lobbyNbPlayers.text = "Nb Players: " + GetNbPlayer().ToString() + "/" + joinedLobby.MaxPlayers.ToString();
     }
 
     private async void HandleLobbyHeartbeat()
@@ -130,7 +130,7 @@ public class TestLobby : NetworkBehaviour
             {
                 float heartbeatTimerMax = 15f;
                 heartbeatTimer = heartbeatTimerMax;
-                Debug.Log("Heartbeat timer");
+                //Debug.Log("Heartbeat timer");
                 await LobbyService.Instance.SendHeartbeatPingAsync(joinedLobby.Id);
             }
         }
@@ -178,10 +178,13 @@ public class TestLobby : NetworkBehaviour
 
     private void StartGame()
     {
-        Debug.Log("Start game");
+        //Debug.Log("Start game");
          //m_NetworkManager.StartHost();
         if (IsServer)
+        { 
             EnableDisableActors(true);
+            InitPlayersClientRpc(true);
+        }
         if (m_NetworkManager.IsServer)
         {
             disableCamera();
@@ -224,7 +227,7 @@ public class TestLobby : NetworkBehaviour
             hostLobby = lobby;
             joinedLobby = hostLobby;
 
-            Debug.Log("Created " + lobby.Name + " " + lobby.MaxPlayers + " " + lobby.Id + " " + lobby.LobbyCode + joinedLobby.Data["GameMode"].Value);
+            //Debug.Log("Created " + lobby.Name + " " + lobby.MaxPlayers + " " + lobby.Id + " " + lobby.LobbyCode + joinedLobby.Data["GameMode"].Value);
             listLobbyPanel.SetActive(false);
             createLobbyPanel.SetActive(false);
             lobbyPanel.SetActive(true);
@@ -253,7 +256,7 @@ public class TestLobby : NetworkBehaviour
 
             QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(queryLobbiesOptions);
 
-            Debug.Log("Lobbies found: " + queryResponse.Results.Count);
+            //Debug.Log("Lobbies found: " + queryResponse.Results.Count);
             foreach (Lobby result in queryResponse.Results)
             {
                 Debug.Log(result.Name + " " + result.MaxPlayers);
@@ -277,7 +280,7 @@ public class TestLobby : NetworkBehaviour
             Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinLobbyByCodeOptions);
             joinedLobby = lobby;
 
-            Debug.Log("Lobby found & joined: " + lobbyCode);
+            //Debug.Log("Lobby found & joined: " + lobbyCode);
 
             PrintPlayers(joinedLobby);
         }
@@ -317,7 +320,7 @@ public class TestLobby : NetworkBehaviour
 
     private void PrintPlayers(Lobby lobby)
     {
-        Debug.Log("Players in lobby " + lobby.Name + "\nMode: " + lobby.Data["GameMode"].Value + "\nMap: " + lobby.Data["Map"].Value);
+        //Debug.Log("Players in lobby " + lobby.Name + "\nMode: " + lobby.Data["GameMode"].Value + "\nMap: " + lobby.Data["Map"].Value);
         foreach (Player player in lobby.Players)
         {
             Debug.Log(player.Data["PlayerName"].Value);
