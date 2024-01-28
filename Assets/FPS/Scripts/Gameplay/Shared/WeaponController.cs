@@ -47,7 +47,7 @@ namespace Unity.FPS.Game
         public GameObject WeaponRoot;
 
         [Tooltip("Tip of the weapon, where the projectiles are shot")]
-        public Transform WeaponMuzzle;
+        public GameObject WeaponMuzzle;
 
         [Header("Shoot Parameters")] [Tooltip("The type of weapon wil affect how it shoots")]
         public WeaponShootType ShootType;
@@ -196,6 +196,7 @@ namespace Unity.FPS.Game
                 m_ContinuousShootAudioSource.loop = true;
             }
 
+            /*
             if (HasPhysicalBullets)
             {
                 m_PhysicalAmmoPool = new Queue<Rigidbody>(ShellPoolSize);
@@ -207,7 +208,8 @@ namespace Unity.FPS.Game
                     m_PhysicalAmmoPool.Enqueue(shell.GetComponent<Rigidbody>());
                 }
             }
-            m_LastMuzzlePosition = WeaponMuzzle.position;
+            */
+            m_LastMuzzlePosition = WeaponMuzzle.transform.position;
 
         }
 
@@ -257,8 +259,8 @@ namespace Unity.FPS.Game
 
             if (Time.deltaTime > 0 )
             {
-                m_LastMuzzlePosition = WeaponMuzzle.position;
-                MuzzleWorldVelocity = (WeaponMuzzle.position - m_LastMuzzlePosition) / Time.deltaTime;
+                m_LastMuzzlePosition = WeaponMuzzle.transform.position;
+                MuzzleWorldVelocity = (WeaponMuzzle.transform.position - m_LastMuzzlePosition) / Time.deltaTime;
                 
                 
             }
@@ -420,7 +422,7 @@ namespace Unity.FPS.Game
             if (m_CurrentAmmo >= 1f
                 && m_LastTimeShot + DelayBetweenShots < Time.time)
             {
-                HandleShoot();
+                HandleShootServerRpc();
                 m_CurrentAmmo -= 1f;
 
                 tryShoot = true;
@@ -451,7 +453,7 @@ namespace Unity.FPS.Game
         {
             if (IsCharging)
             {
-                HandleShoot();
+                HandleShootServerRpc();
 
                 CurrentCharge = 0f;
                 IsCharging = false;
@@ -461,8 +463,8 @@ namespace Unity.FPS.Game
 
             tryRealeaseCharge =  false;
         }
-        //
-        void HandleShoot()
+        [ServerRpc]
+        void HandleShootServerRpc(ServerRpcParams s = default)
         {
             
             int bulletsPerShotFinal = ShootType == WeaponShootType.Charge
@@ -472,28 +474,32 @@ namespace Unity.FPS.Game
             // spawn all bullets with random direction
             for (int i = 0; i < bulletsPerShotFinal; i++)
             {
-                Vector3 shotDirection = GetShotDirectionWithinSpread(WeaponMuzzle);
-                ProjectileStandard newProjectile = Instantiate(ProjectilePrefab, WeaponMuzzle.position,
-                    Quaternion.LookRotation(shotDirection));
+                Vector3 shotDirection = GetShotDirectionWithinSpread(WeaponMuzzle.transform);
+                ProjectileStandard newProjectile = Instantiate(ProjectilePrefab, WeaponMuzzle.transform.position,
+                    Quaternion.LookRotation(shotDirection));               
+                newProjectile.OwnerGameobject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(s.Receive.SenderClientId);
                 newProjectile.m_weaponController = this;
+                newProjectile.playerWeaponsManager = weaponManager;
                 newProjectile.GetComponent<NetworkObject>().Spawn();
                 newProjectile.Shoot();
+                newProjectile.DestroySelf();
             }
-
+            /*
             // muzzle flash
             if (MuzzleFlashPrefab != null)
             {
-                GameObject muzzleFlashInstance = Instantiate(MuzzleFlashPrefab, WeaponMuzzle.position,
-                    WeaponMuzzle.rotation, WeaponMuzzle.transform);
+                GameObject muzzleFlashInstance = Instantiate(MuzzleFlashPrefab, WeaponMuzzle.transform.position,
+                    WeaponMuzzle.transform.rotation, WeaponMuzzle.transform);
+                muzzleFlashInstance.GetComponent<NetworkObject>().Spawn();
                 // Unparent the muzzleFlashInstance
                 if (UnparentMuzzleFlash)
                 {
                     muzzleFlashInstance.transform.SetParent(null);
                 }
 
-                Destroy(muzzleFlashInstance, 2f);
+                NetworkManager.Destroy(muzzleFlashInstance, 2f);
             }
-
+            */
             if (HasPhysicalBullets)
             {
                 ShootShell();
@@ -525,7 +531,58 @@ namespace Unity.FPS.Game
         {
             if(!m_PlayerCharacterControllerN.IsOwner)
             {
-                HandleShoot();
+                            int bulletsPerShotFinal = ShootType == WeaponShootType.Charge
+                ? Mathf.CeilToInt(CurrentCharge * BulletsPerShot)
+                : BulletsPerShot;
+
+                // spawn all bullets with random direction
+                for (int i = 0; i < bulletsPerShotFinal; i++)
+                {
+                    Vector3 shotDirection = GetShotDirectionWithinSpread(WeaponMuzzle.transform);
+                    ProjectileStandard newProjectile = Instantiate(ProjectilePrefab, WeaponMuzzle.transform.position,
+                        Quaternion.LookRotation(shotDirection));
+                    newProjectile.OwnerGameobject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(s.Receive.SenderClientId);
+                    newProjectile.m_weaponController = this;
+                    newProjectile.playerWeaponsManager = weaponManager;
+                    newProjectile.GetComponent<NetworkObject>().Spawn();
+                    newProjectile.Shoot();
+                    newProjectile.DestroySelfServerRpc();
+                }
+                /*
+                // muzzle flash
+                if (MuzzleFlashPrefab != null)
+                {
+                    GameObject muzzleFlashInstance = Instantiate(MuzzleFlashPrefab, WeaponMuzzle.transform.position,
+                        WeaponMuzzle.transform.rotation, WeaponMuzzle.transform);
+                    muzzleFlashInstance.GetComponent<NetworkObject>().Spawn();
+                    // Unparent the muzzleFlashInstance
+                    if (UnparentMuzzleFlash)
+                    {
+                        muzzleFlashInstance.transform.SetParent(null);
+                    }
+
+                    NetworkManager.Destroy(muzzleFlashInstance, 2f);
+                }
+                */
+                if (HasPhysicalBullets)
+                {
+                    ShootShell();
+                    m_CarriedPhysicalBullets--;
+                }
+
+                m_LastTimeShot = Time.time;
+
+                // play shoot SFX
+                if (ShootSfx && !UseContinuousShootSound)
+                {
+                    m_ShootAudioSource.PlayOneShot(ShootSfx);
+                }
+
+                // Trigger attack animation if there is any
+                if (WeaponAnimator)
+                {
+                    WeaponAnimator.SetTrigger(k_AnimAttackParameter);
+                }
             }
         }
 

@@ -6,7 +6,6 @@ using Unity.Netcode;
 using System.Data;
 using System;
 
-
 public class NetWorkManagerUI : MonoBehaviour
 {
     [SerializeField] private Button m_HostButton;
@@ -22,54 +21,23 @@ public class NetWorkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-/*        m_HostButton.onClick.AddListener(() =>
+        //Debug.Log("networkUI");
+        StartCoroutine(Spawn());
+        
+    }
+
+    IEnumerator Spawn()
+    {
+        if (NetworkManager.Singleton.IsHost)
         {
-            if (m_NetworkManager.StartHost() == true)
-            {
-                if(m_NetworkManager.IsServer == true)
-                {
-                    StartCoroutine(Spawn());
-                }
-                else
-                {
-                    Debug.Log("is not the server");
-                }
-            }
-            else {
-                Debug.Log("start can't start");
-            };
-        });
-        m_JoinButton.onClick.AddListener(() =>
-        {
-            m_NetworkManager.StartClient();
-            StartCoroutine(SpawnClient());
-            //
-        });*/
-
-    }
-    private void Start()
-    {
-        if (m_NetworkManager.IsServer) Spawn();
-        else SpawnClient();
-    }
-
-    void Spawn()
-    {
-//        yield return new WaitForSeconds(2f);
-        m_CanvasMenu.gameObject.SetActive(false);
-        m_CanvasHUD.gameObject.SetActive(true);
-        enemy.transform.position = enemySpawnPosition.transform.position;
-        GameObject Enemy = Instantiate(enemy);
-        Enemy.GetComponent<NetworkObject>().Spawn();
-//        yield return null;      
-    }
-
-    void SpawnClient()
-    {
-//        yield return new WaitForSeconds(2f);
-        m_CanvasMenu.gameObject.SetActive(false);
-        m_CanvasHUD.gameObject.SetActive(true);
-//        yield return null;
+            //Debug.Log("networkUI2");
+            yield return new WaitForSeconds(3f);
+            enemy.transform.position = enemySpawnPosition.transform.position;
+            GameObject Enemy = Instantiate(enemy);
+            Enemy.GetComponent<NetworkObject>().Spawn();
+            yield return null;
+        }
+           
     }
 
 }

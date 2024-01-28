@@ -780,7 +780,7 @@ MonoBehaviour:
     CrosshairSize: 0
     CrosshairColor: {r: 0, g: 0, b: 0, a: 0}
   WeaponRoot: {fileID: 8815063736924141185}
-  WeaponMuzzle: {fileID: 2096565386399891227}
+  WeaponMuzzle: {fileID: 2201913640410082181}
   ShootType: 1
   ProjectilePrefab: {fileID: 8924682559891268397, guid: 154bfb4989fe16d439e8f3fb7c20b72b,
     type: 3}
@@ -814,7 +814,9 @@ MonoBehaviour:
   ContinuousShootStartSfx: {fileID: 0}
   ContinuousShootLoopSfx: {fileID: 0}
   ContinuousShootEndSfx: {fileID: 0}
+  m_LastMuzzlePosition: {x: 0, y: 0, z: 0}
   weaponManager: {fileID: 0}
+  m_PlayerCharacterControllerN: {fileID: 0}
 --- !u!82 &2231955200838058728
 AudioSource:
   m_ObjectHideFlags: 0

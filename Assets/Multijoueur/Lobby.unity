@@ -953,6 +953,7 @@ MonoBehaviour:
   listLobbyPanel: {fileID: 488562073}
   inputLobbyCode: {fileID: 1460636241}
   submitCode: {fileID: 504791621}
+  lobbyCamera: {fileID: 1257707186}
   createLobbyPanel: {fileID: 902236987}
   createLobby: {fileID: 840675353}
   mapLobby: {fileID: 1141985297}
@@ -963,7 +964,7 @@ MonoBehaviour:
   lobbyNbPlayers: {fileID: 779988457}
   createLobbyButton: {fileID: 27727479}
   startGameButton: {fileID: 505737264}
-  sceneToLoad: TestMenu barth
+  sceneToLoad: TestMenu
 --- !u!4 &410761748
 Transform:
   m_ObjectHideFlags: 0
@@ -2047,6 +2048,7 @@ GameObject:
   - component: {fileID: 654317756}
   - component: {fileID: 654317755}
   - component: {fileID: 654317754}
+  - component: {fileID: 654317757}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -2134,6 +2136,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &654317757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654317753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cf32814d5691ab4cb919399ccac61a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &779988455
 GameObject:
   m_ObjectHideFlags: 0

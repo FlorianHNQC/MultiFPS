@@ -54,7 +54,7 @@ namespace Unity.FPS.AI
 
             // Remember the rotation offset between the pivot's forward and the weapon's forward
             m_RotationWeaponForwardToPivot =
-                Quaternion.Inverse(m_EnemyController.GetCurrentWeapon().WeaponMuzzle.rotation) * TurretPivot.rotation;
+                Quaternion.Inverse(m_EnemyController.GetCurrentWeapon().WeaponMuzzle.transform.rotation) * TurretPivot.rotation;
 
             // Start with idle
             AiState = AIState.Idle;

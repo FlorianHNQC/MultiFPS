@@ -10,8 +10,8 @@ namespace Unity.FPS.Gameplay
 {
     public class ProjectileStandard : NetworkBehaviour
     {
-        [SerializeField] public NetworkObject OwnerGameobject { get; private set; }
-        [SerializeField] public PlayerWeaponsManagerN playerWeaponsManager { get; private set; }
+        [SerializeField] public NetworkObject OwnerGameobject { get;  set; }
+        [SerializeField] public PlayerWeaponsManagerN playerWeaponsManager { get;  set; }
         public Vector3 InitialPosition { get; private set; }
         public Vector3 InitialDirection { get; private set; }
         public Vector3 InheritedMuzzleVelocity { get; private set; }
@@ -20,16 +20,8 @@ namespace Unity.FPS.Gameplay
 
         [SerializeField] public WeaponController m_weaponController;
 
-        public void Shoot(ServerRpcParams s = default)
+        public void Shoot()
         {
-            OwnerGameobject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(s.Receive.SenderClientId);
-            Debug.Log(" name " + OwnerGameobject.name);
-
-            if (OwnerGameobject.TryGetComponent(out PlayerWeaponsManagerN out_playerWeaponsManager))
-            {
-                playerWeaponsManager = out_playerWeaponsManager;
-            }
-
             InitialPosition = transform.position;
             InitialDirection = transform.forward;
             InheritedMuzzleVelocity = m_weaponController.MuzzleWorldVelocity;
@@ -101,11 +93,19 @@ namespace Unity.FPS.Gameplay
         void OnEnable()
         {
 
-           // OnShoot += OnShoot;
-
-            Destroy(gameObject, MaxLifeTime);
+            // OnShoot += OnShoot;
         }
 
+        [ServerRpc]
+        public void DestroySelfServerRpc()
+        {
+            NetworkManager.Destroy(gameObject, MaxLifeTime);
+        }
+
+        public void DestroySelf()
+        {
+            NetworkManager.Destroy(gameObject, MaxLifeTime);
+        }
         public void OnShoot()
         {
             

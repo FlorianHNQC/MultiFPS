@@ -18,6 +18,7 @@ public class TestLobby : NetworkBehaviour
     [SerializeField] private GameObject listLobbyPanel;
     [SerializeField] private TMP_InputField inputLobbyCode;
     [SerializeField] private Button submitCode;
+    [SerializeField] private GameObject lobbyCamera;
 
     [SerializeField] private GameObject createLobbyPanel;
     [SerializeField] private Button createLobby;
@@ -73,6 +74,11 @@ public class TestLobby : NetworkBehaviour
         {
             StartGame();
         });
+    }
+
+    private void disableCamera()
+    {
+        lobbyCamera.SetActive(false);
     }
 
     private async void Start()
@@ -173,13 +179,18 @@ public class TestLobby : NetworkBehaviour
     private void StartGame()
     {
         Debug.Log("Start game");
-//        m_NetworkManager.StartHost();
+         //m_NetworkManager.StartHost();
         if (IsServer)
             EnableDisableActors(true);
         if (m_NetworkManager.IsServer)
+        {
+            disableCamera();
             NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
+        }
         else
+        {
             Debug.Log("Only the server can change the scene");
+        }
     }
 
     [ClientRpc]
