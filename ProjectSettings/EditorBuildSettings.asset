@@ -20,13 +20,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Multijoueur/Test.unity
     guid: ba878725b61b6e24a82e3bc369fdfbab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Multijoueur/TestMenu.unity
     guid: 38b2ef19757b3bb49b19dedcf14db4bf
-  - enabled: 0
-    path: Assets/Multijoueur/TestMenu barth.unity
-    guid: 1d05b952042b62846b3d3fed6845efad
-  - enabled: 0
+  - enabled: 1
     path: Assets/Multijoueur/Lobby.unity
     guid: 8429e11798cb69343978dba47d0ff7a8
+  - enabled: 1
+    path: Assets/Multijoueur/TestMenu barth.unity
+    guid: 1d05b952042b62846b3d3fed6845efad
   m_configObjects: {}

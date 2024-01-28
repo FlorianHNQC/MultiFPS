@@ -22,7 +22,7 @@ public class NetWorkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-        m_HostButton.onClick.AddListener(() =>
+/*        m_HostButton.onClick.AddListener(() =>
         {
             if (m_NetworkManager.StartHost() == true)
             {
@@ -44,25 +44,32 @@ public class NetWorkManagerUI : MonoBehaviour
             m_NetworkManager.StartClient();
             StartCoroutine(SpawnClient());
             //
-        });
+        });*/
 
-        IEnumerator Spawn()
-        {
-            yield return new WaitForSeconds(2f);
-            m_CanvasMenu.gameObject.SetActive(false);
-            m_CanvasHUD.gameObject.SetActive(true);
-            enemy.transform.position = enemySpawnPosition.transform.position;
-            GameObject Enemy = Instantiate(enemy);
-            Enemy.GetComponent<NetworkObject>().Spawn();
-            yield return null;      
-        }
-
-        IEnumerator SpawnClient()
-        {
-            yield return new WaitForSeconds(2f);
-            m_CanvasMenu.gameObject.SetActive(false);
-            m_CanvasHUD.gameObject.SetActive(true);
-            yield return null;
-        }
     }
+    private void Start()
+    {
+        if (m_NetworkManager.IsServer) Spawn();
+        else SpawnClient();
+    }
+
+    void Spawn()
+    {
+//        yield return new WaitForSeconds(2f);
+        m_CanvasMenu.gameObject.SetActive(false);
+        m_CanvasHUD.gameObject.SetActive(true);
+        enemy.transform.position = enemySpawnPosition.transform.position;
+        GameObject Enemy = Instantiate(enemy);
+        Enemy.GetComponent<NetworkObject>().Spawn();
+//        yield return null;      
+    }
+
+    void SpawnClient()
+    {
+//        yield return new WaitForSeconds(2f);
+        m_CanvasMenu.gameObject.SetActive(false);
+        m_CanvasHUD.gameObject.SetActive(true);
+//        yield return null;
+    }
+
 }

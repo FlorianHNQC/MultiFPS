@@ -41,6 +41,7 @@ public class TestLobby : NetworkBehaviour
     private string playerName;
     private int nbPlayers;
     private bool isHostLobby = false;
+    private List<Actor> actors = new List<Actor>();
 
     private void Awake()
     {
@@ -95,7 +96,12 @@ public class TestLobby : NetworkBehaviour
         HandleLobbyHeartbeat();
         HandleLobbyPollForUpdates();
         UpdateLobbyPrintedData();
-        EnableDisableActors(false);
+        int currentNbPlayers = GetNbPlayer();
+        if (nbPlayers != currentNbPlayers) {
+            Debug.Log("Nb players changed");
+            EnableDisableActors(false);
+            nbPlayers = currentNbPlayers;
+        }
         if (Input.GetKeyDown(KeyCode.Return) && lobbyPanel.activeSelf)
         {
             StartGame();
@@ -140,20 +146,46 @@ public class TestLobby : NetworkBehaviour
 
     private void EnableDisableActors(bool todo)
     {
-        Actor[] actorComponents = FindObjectsOfType<Actor>();
-        if (actorComponents.Length > 0)
-            foreach (Actor actor in actorComponents) actor.gameObject.SetActive(todo);
+        if (!todo)
+        {
+            if (actors == null) actors = new List<Actor>();
+            Actor[] actorComponents = FindObjectsOfType<Actor>();
+            foreach (Actor actor in actorComponents)
+            {
+                actors.Add(actor);
+                actor.gameObject.SetActive(todo);
+            }
+        }
+
+        else if (todo)
+        {
+            foreach (Actor actor in actors) actor.gameObject.SetActive(todo);
+        }
+/*        if (actors.Length > 0)
+            foreach (Actor actor in actors) actor.gameObject.SetActive(todo);
+        else {
+            actors = FindObjectsOfType<Actor>();
+            if (actors.Length > 0)
+                foreach (Actor actor in actors) actor.gameObject.SetActive(todo);
+        }*/
     }
 
     private void StartGame()
     {
         Debug.Log("Start game");
 //        m_NetworkManager.StartHost();
+        if (IsServer)
+            EnableDisableActors(true);
         if (m_NetworkManager.IsServer)
             NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
         else
             Debug.Log("Only the server can change the scene");
-        EnableDisableActors(true);
+    }
+
+    [ClientRpc]
+    public void InitPlayersClientRpc(bool todo)
+    {
+        EnableDisableActors(todo);
     }
 
     private void CreateLobby()
@@ -362,6 +394,7 @@ public class TestLobby : NetworkBehaviour
 
     private int GetNbPlayer(Lobby lobby)
     {
+        if (joinedLobby == null) return 0;
         int nbPlayer = 0;
         foreach (Player player in lobby.Players)
         {
