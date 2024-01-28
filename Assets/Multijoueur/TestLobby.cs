@@ -9,9 +9,12 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using Unity.FPS.Game;
 
 public class TestLobby : NetworkBehaviour
 {
+    [SerializeField] private NetworkManager m_NetworkManager;
+
     [SerializeField] private GameObject listLobbyPanel;
     [SerializeField] private TMP_InputField inputLobbyCode;
     [SerializeField] private Button submitCode;
@@ -37,6 +40,7 @@ public class TestLobby : NetworkBehaviour
     private float lobbyUpdateTimer;
     private string playerName;
     private int nbPlayers;
+    private bool isHostLobby = false;
 
     private void Awake()
     {
@@ -45,6 +49,8 @@ public class TestLobby : NetworkBehaviour
             string text = playerNameLobby.textComponent.text;
             if (playerNameLobby.textComponent.text != null) CreateLobby(playerNameLobby.textComponent.text);
             else CreateLobby();
+            if (m_NetworkManager.StartHost() == true) EnableDisableActors(false);
+            else Debug.Log("Server can't start");
         });
         if (inputLobbyCode.textComponent.text != null) {
             submitCode.onClick.AddListener(() =>
@@ -53,6 +59,7 @@ public class TestLobby : NetworkBehaviour
                 listLobbyPanel.SetActive(false);
                 createLobbyPanel.SetActive(false);
                 lobbyPanel.SetActive(true);
+                m_NetworkManager.StartClient();
             });
         }
         createLobbyButton.onClick.AddListener(() =>
@@ -63,7 +70,7 @@ public class TestLobby : NetworkBehaviour
         });
         startGameButton.onClick.AddListener(() =>
         {
-            NetworkManager.SceneManager.LoadScene("TestMenu barth", LoadSceneMode.Additive);
+            StartGame();
         });
     }
 
@@ -88,6 +95,11 @@ public class TestLobby : NetworkBehaviour
         HandleLobbyHeartbeat();
         HandleLobbyPollForUpdates();
         UpdateLobbyPrintedData();
+        EnableDisableActors(false);
+        if (Input.GetKeyDown(KeyCode.Return) && lobbyPanel.activeSelf)
+        {
+            StartGame();
+        }
     }
 
     private void UpdateLobbyPrintedData()
@@ -126,6 +138,24 @@ public class TestLobby : NetworkBehaviour
         }
     }
 
+    private void EnableDisableActors(bool todo)
+    {
+        Actor[] actorComponents = FindObjectsOfType<Actor>();
+        if (actorComponents.Length > 0)
+            foreach (Actor actor in actorComponents) actor.gameObject.SetActive(todo);
+    }
+
+    private void StartGame()
+    {
+        Debug.Log("Start game");
+//        m_NetworkManager.StartHost();
+        if (m_NetworkManager.IsServer)
+            NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
+        else
+            Debug.Log("Only the server can change the scene");
+        EnableDisableActors(true);
+    }
+
     private void CreateLobby()
     {
         CreateLobby(playerName);
@@ -155,6 +185,7 @@ public class TestLobby : NetworkBehaviour
             listLobbyPanel.SetActive(false);
             createLobbyPanel.SetActive(false);
             lobbyPanel.SetActive(true);
+            isHostLobby = true;
         }
         catch (LobbyServiceException e)
         {
